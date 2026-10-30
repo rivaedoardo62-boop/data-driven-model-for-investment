@@ -18,6 +18,8 @@ Common to all attempts: AAPL, MSFT, AMZN, GOOG, weekly, execution at the next op
   population 60, 30 generations, 5 seeds; fitness = training Sharpe net of costs. The 5 best genomes of each run (19 distinct)
   go to the validation; the one with the best validation Sharpe is kept.
 - **Control**: random search with the same number of backtests (7,394) and the same selection.
+- **Outputs**: `data/ga/attempt_1/` (candidates of both methods), written by the version of `03_optimize_ga.py` used for
+  this attempt, since replaced by the one of Attempt 2.
 - **Result**
 
 | | Training Sharpe | Validation Sharpe | Validation max DD | Validation time long |

@@ -1,7 +1,8 @@
 # Metrics
 
 How to compute the returns of a strategy from weekly signals without lookahead bias, how to split them into In-Sample and Out-of-Sample,
-and the metrics to evaluate and compare the strategies. Prices are adjusted for splits and dividends; **no transaction costs**.
+and the metrics to evaluate and compare the strategies. Prices are adjusted for splits and dividends; the strategies pay a
+**transaction cost** of `metrics.cost_bps` (10 bps) on the capital traded, the benchmarks none.
 
 The returns can be computed in two ways, which differ only in the execution price:
 
@@ -37,7 +38,9 @@ Common to both executions:
 - The portfolio is **equal weight across the stocks, with no leverage**: each stock gets $1/N$ of the capital, long, flat or short,
   **rebalanced to $1/N$ every week**.
 - Returns are simple (not logarithmic) and compounded over time: $E_{t+1} / E_t = 1 + r_{t+1}$.
-- No transaction costs: the return of a stock is the same whatever the change of signal.
+- Transaction costs: each change of signal pays $c$ = `metrics.cost_bps` on the capital traded, so the return of a strategy is
+  $r_t = \frac{1}{N} \sum_i s_{t,i} \, R^{fwd}_{t,i} - c \cdot \frac{1}{N} \sum_i \lvert s_{t,i} - s_{t-1,i} \rvert$, with every stock flat
+  before the first week (`src/backtest.py`). The formulas of the strategy below are before costs. Benchmarks are bought and held, without costs.
 - Benchmarks: **Equal weight** (the same stocks, always long, rebalanced to $1/N$ every week) and a **market ETF** bought and held,
   never traded by the strategies.
 - The worst mistake is the **lookahead bias**: $s_{t,i} \cdot \left(C_{t,i} / C_{t-1,i} - 1\right)$ uses $C_t$ to earn a move that already
@@ -192,7 +195,8 @@ A ratio whose denominator is zero is not defined, e.g. the Sharpe ratio of a str
 ## Limits of weekly prices
 
 - **The execution at the close is optimistic** (see [Execution at the close](#execution-at-the-close)): it ignores the gap to the next open.
-- **No transaction costs**: a strategy that trades often looks better than it would be in practice (see the turnover).
+- **Fixed transaction costs only**: 10 bps per trade, no bid-ask spread, market impact or slippage: a strategy that trades
+  often may still look better than it would be in practice (see the turnover).
 - **Weekly prices hide what happens inside the week**: max drawdown and worst week are measured week by week, so the real ones are larger.
 - **One decision per week**: no stop losses or signals inside the week.
 - **Survivorship bias**: tickers chosen today, knowing which companies survived and grew, make every strategy look better.
