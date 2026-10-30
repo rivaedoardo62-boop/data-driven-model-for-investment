@@ -1,0 +1,48 @@
+check,ticker,result,detail
+calendar,all,PASS,6723 days from 2000-01-03 to 2026-09-25
+calendar,weeks,PASS,1395 weeks; 247 with fewer than 5 trading days (holidays)
+positive,AAPL,PASS,min price 0.1902
+ohlc,AAPL,PASS,0 days with low above or high below open/close
+missing,AAPL,PASS,first price 2000-01-03; 0 missing days after it
+stale,AAPL,PASS,longest run of identical closes: 2 days
+volume,AAPL,PASS,0 days with zero volume
+splits,AAPL,PASS,"4 splits, 2000-06-21 2:1, 2005-02-28 2:1, 2014-06-09 7:1, 2020-08-31 4:1"
+dividends,AAPL,PASS,57 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,AAPL,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,AAPL,WARN,"3 moves above 20% daily or 25% weekly, kept"
+positive,MSFT,PASS,min price 10.8638
+ohlc,MSFT,PASS,0 days with low above or high below open/close
+missing,MSFT,PASS,first price 2000-01-03; 0 missing days after it
+stale,MSFT,PASS,longest run of identical closes: 2 days
+volume,MSFT,PASS,0 days with zero volume
+splits,MSFT,PASS,"1 splits, 2003-02-18 2:1"
+dividends,MSFT,PASS,91 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,MSFT,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,MSFT,PASS,"0 moves above 20% daily or 25% weekly, kept"
+positive,AMZN,PASS,min price 0.2755
+ohlc,AMZN,PASS,0 days with low above or high below open/close
+missing,AMZN,PASS,first price 2000-01-03; 0 missing days after it
+stale,AMZN,PASS,longest run of identical closes: 3 days
+volume,AMZN,PASS,0 days with zero volume
+splits,AMZN,PASS,"1 splits, 2022-06-06 20:1"
+dividends,AMZN,PASS,0 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,AMZN,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,AMZN,WARN,"24 moves above 20% daily or 25% weekly, kept"
+positive,GOOG,PASS,min price 2.3676
+ohlc,GOOG,PASS,0 days with low above or high below open/close
+missing,GOOG,PASS,first price 2004-08-19 (listed after the start); 0 missing days after it
+stale,GOOG,PASS,longest run of identical closes: 2 days
+volume,GOOG,PASS,0 days with zero volume
+splits,GOOG,PASS,"3 splits, 2014-03-27 2.002:1, 2015-04-27 1.00275:1, 2022-07-18 20:1"
+dividends,GOOG,PASS,10 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,GOOG,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,GOOG,WARN,"1 moves above 20% daily or 25% weekly, kept"
+positive,SPY,PASS,min price 48.8226
+ohlc,SPY,PASS,0 days with low above or high below open/close
+missing,SPY,PASS,first price 2000-01-03; 0 missing days after it
+stale,SPY,PASS,longest run of identical closes: 2 days
+volume,SPY,PASS,0 days with zero volume
+splits,SPY,PASS,0 splits
+dividends,SPY,PASS,108 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,SPY,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,SPY,PASS,"0 moves above 20% daily or 25% weekly, kept"

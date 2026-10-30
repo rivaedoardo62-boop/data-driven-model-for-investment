@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment (recreate with `uv sync`)
+.venv/
+
+# Credentials and API keys
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Tool caches
+.ruff_cache/
+
+# Editors and OS files
+.vscode/
+.idea/
+.DS_Store
+
+# Claude Code local settings
+.claude/

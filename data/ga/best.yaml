@@ -1,0 +1,59 @@
+members:
+- windows:
+    trend: 35
+    momentum: 29
+    reversal: 7
+    volatility: 10
+  weights:
+    trend: 0.7838
+    momentum: -0.7191
+    reversal: 0.7597
+    volatility: -0.9684
+  threshold: -0.2526
+- windows:
+    trend: 5
+    momentum: 10
+    reversal: 6
+    volatility: 15
+  weights:
+    trend: 0.9889
+    momentum: 0.7468
+    reversal: 0.832
+    volatility: -0.8739
+  threshold: -0.059
+- windows:
+    trend: 47
+    momentum: 9
+    reversal: 2
+    volatility: 9
+  weights:
+    trend: 0.4089
+    momentum: -0.0689
+    reversal: 0.2424
+    volatility: -0.4188
+  threshold: 0.0076
+- windows:
+    trend: 29
+    momentum: 47
+    reversal: 2
+    volatility: 5
+  weights:
+    trend: 0.1554
+    momentum: 0.53
+    reversal: 0.2309
+    volatility: -0.3452
+  threshold: -0.1806
+- windows:
+    trend: 45
+    momentum: 34
+    reversal: 6
+    volatility: 21
+  weights:
+    trend: 0.186
+    momentum: -0.5319
+    reversal: 0.7512
+    volatility: -0.0325
+  threshold: -0.293
+vote: 3
+warmup: 52
+scale_window: 26

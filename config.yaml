@@ -1,0 +1,35 @@
+data:
+  tickers: [AAPL, MSFT, AMZN, GOOG] # traded
+  benchmark: SPY # market benchmark, bought and held, not traded
+  start: "2000-01-01"
+  end: "2026-09-25" # included, a Friday
+  data_dir: data
+
+strategies:
+  sma: { window: 10 } # weeks
+  random: { seed: 42 }
+  ga: { params_file: data/ga/best.yaml } # members and vote chosen by 03_optimize_ga.py
+
+ga: # genetic algorithm that chooses the parameters of the ensemble (src/ensemble.py, src/genetic.py)
+  train_end: "2014-12-26" # last Friday of the training period; validation from here to metrics.is_end
+  bounds: # weeks, [min, max] of the window of each indicator
+    trend: [4, 52]
+    momentum: [4, 52]
+    reversal: [1, 8]
+    volatility: [4, 26]
+  scale_window: 26 # weeks of returns used to scale the indicators into z-scores
+  warmup: 52 # weeks of returns before the first signal: the longest window, the same for every genome
+  population: 60
+  generations: 30
+  crossover: 0.7 # probability that two parents are crossed
+  mutation: 0.3 # probability that a genome is mutated
+  tournament: 3 # genomes compared in each tournament of the selection
+  seeds: [1, 2, 3, 4, 5] # one run per seed, its best genome is a member of the vote
+  vote: 3 # long when at least this many members are long (majority of 5)
+  random_search_seed: 0
+
+metrics:
+  type: open_to_open # execution at the next open, or close_to_close: at the close (see docs/metrics.md)
+  risk_free: 0.02 # annual, about the average 3-month US T-bill rate over the period
+  is_end: "2018-12-28" # last Friday of the In-Sample period
+  cost_bps: 10 # cost of each trade, in basis points of the capital traded (strategies only)

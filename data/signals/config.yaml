@@ -1,0 +1,16 @@
+data:
+  benchmark: SPY
+  end: '2026-09-25'
+  start: '2000-01-01'
+  tickers:
+  - AAPL
+  - MSFT
+  - AMZN
+  - GOOG
+strategies:
+  ga:
+    params_file: data/ga/best.yaml
+  random:
+    seed: 42
+  sma:
+    window: 10

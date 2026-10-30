@@ -1,0 +1,44 @@
+data:
+  benchmark: SPY
+  end: '2026-09-25'
+  start: '2000-01-01'
+  tickers:
+  - AAPL
+  - MSFT
+  - AMZN
+  - GOOG
+ga:
+  bounds:
+    momentum:
+    - 4
+    - 52
+    reversal:
+    - 1
+    - 8
+    trend:
+    - 4
+    - 52
+    volatility:
+    - 4
+    - 26
+  crossover: 0.7
+  generations: 30
+  mutation: 0.3
+  population: 60
+  random_search_seed: 0
+  scale_window: 26
+  seeds:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  tournament: 3
+  train_end: '2014-12-26'
+  vote: 3
+  warmup: 52
+metrics:
+  cost_bps: 10
+  is_end: '2018-12-28'
+  risk_free: 0.02
+  type: open_to_open
