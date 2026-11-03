@@ -45,6 +45,7 @@ In-Sample period), Out-of-Sample from 2018-12-31. Execution at the next open, 10
 
 | File | Content |
 |---|---|
+| [docs/strategy.md](docs/strategy.md) | Hypothesis, data, periods, exact signal logic, genetic algorithm, execution, benchmarks, pitfalls |
 | [docs/setup.md](docs/setup.md) | Install uv and the dependencies, run the code, add packages, what to do if something fails |
 | [docs/metrics.md](docs/metrics.md) | Execution of the signals and returns, In-Sample / Out-of-Sample split, metrics to evaluate the strategies |
 | [docs/experiment_log.md](docs/experiment_log.md) | Every configuration tried, with its result, and the Out-of-Sample result |
