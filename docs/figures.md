@@ -64,4 +64,4 @@ example URA starts in 2010), not a missing price: this is what the "Missing clos
 
 `macro.png`: VIX, yield curve, Fed funds rate, credit spread and inflation, with the recessions in gray and the thresholds
 of the market regimes decided in [experiment_log.md](experiment_log.md). They describe the periods, they never enter the
-signal.
+signal. October 2025 has no inflation figure: the BLS did not publish it (see [strategy.md](strategy.md)).

@@ -150,6 +150,20 @@ strategy on ETFs of the AI supply chain (transfer test) and on short histories, 
 AI-managed funds, the results by market regime (macro series from FRED) and the Sharpe ratio with the actual T-bill rate.
 They evaluate the strategy and never change it.
 
+The extra data (downloaded on 2026-11-03, `data/extra/sources.yaml`) pass every check of `07_validate_extra_data.py`
+(`data/extra/validation/checks.csv`); what the warnings mean:
+
+| Warning | Meaning |
+|---|---|
+| Zero volume: AQMIX on every day | A mutual fund: one price a day (its net asset value), not traded on an exchange. Its returns are those of the net asset value |
+| Zero volume: NLR 112 days (2014-2020), DBMF 49 days (2019-2020), a few days for IGV, QTUM, BOTZ, SRVR | Thinly traded ETFs in those years: a real trade would pay more than 10 bps |
+| Extreme moves: SOXX week of 2001-09-21, XLE 2008-10-10 and 2020-03-09 | Real moves (reopening after 11 September, 2008 crash, oil price war), kept |
+| CPIAUCSL: October 2025 missing | Not published by the BLS (no prices collected during the 2025 federal government shutdown). Inflation over 12 months is computed month by month, so the gap stays a gap; a week of October 2025 takes the last published value |
+
+Splits and reverse splits (SOXX and IGV in 2024; XLK, XLU, XLE in 2025; NLR and URA in 2013, URA in 2015) are all
+adjusted, and every dividend moves the adjustment factor by about its yield. The weekly correlations with SPY are those expected
+(from -0.07 for AQMIX and 0.18 for DBMF, the managed futures funds, to 0.86 for XLK): no ticker is mixed up.
+
 ## Limits
 
 - Weekly decisions: no exit inside the week, and weekly drawdowns understate the daily ones.

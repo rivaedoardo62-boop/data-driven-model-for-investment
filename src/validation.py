@@ -9,13 +9,13 @@ Prices. Checks (FAIL stops the pipeline, WARN is reported and explained, PASS is
     volume        no day with zero volume
     splits        on every split day the adjusted return is normal; the return without the adjustment is reported
     dividends     the dividend adjustment (adjusted close / close adjusted only for splits) changes only on ex-dividend days,
-                  and changes on every one of them
+                  and on every one of them by about the dividend yield (tiny dividends, below 0.01%, included)
     weekly        the weekly open and close are the first open and the last close of the daily prices of the week
     outliers      daily moves above 20% and weekly moves above 25%: reported, never removed (they are real prices)
 
 Macro series (FRED):
     coverage      the series starts by the first day asked and ends near the last one
-    gaps          no missing month for a monthly series, no gap above 10 days for a daily one
+    gaps          no missing month for a monthly series (except the KNOWN_GAPS, reported), no gap above 10 days for a daily one
     range         every value inside a plausible range (e.g. VIX between 5 and 100, recession indicator 0 or 1)
 """
 
@@ -26,7 +26,8 @@ from src.config import ROOT
 from src.data import read_weekly
 
 PRICE_TOLERANCE = 1e-6  # relative, rounding of the prices of Yahoo
-DIVIDEND_TOLERANCE = 1e-4  # relative change of the adjustment factor that counts as an adjustment (a dividend is > 0.01%)
+DIVIDEND_TOLERANCE = 1e-4  # relative change of the adjustment factor that needs a dividend to explain it
+DIVIDEND_SHARE = 0.5  # a dividend is adjusted if the factor changes by at least half of its yield
 SPLIT_DAY_MAX = 0.25  # an adjusted daily move above 25% on a split day means the split is not adjusted
 STALE_DAYS = 5  # identical closes in a row
 DAILY_OUTLIER, WEEKLY_OUTLIER = 0.20, 0.25
@@ -40,6 +41,9 @@ MACRO_RANGES = {  # plausible values: outside them the series is wrong or misrea
     "BAA10Y": (0, 8),
     "CPIAUCSL": (100, 500),
     "DTB3": (-1, 20),
+}
+KNOWN_GAPS = {  # months missing at the source, reported as WARN instead of FAIL
+    "CPIAUCSL": ["2025-10"],  # not published by the BLS: no prices collected during the 2025 federal government shutdown
 }
 
 
@@ -139,12 +143,13 @@ def validate_prices(prices_dir, tickers: list[str]) -> tuple[pd.DataFrame, pd.Da
             f"{len(ratios)} splits" + ("".join(f", {r['date']} {r['ratio']:g}:1" for r in split_rows if r["ticker"] == t)),
         )
 
-        # Dividends: the adjustment factor changes on the ex-dividend days, and only there
+        # Dividends: the adjustment factor changes on the ex-dividend days by about the dividend yield, and only there
         factor = raw["close"][t] / raw["close_split_only"][t]
-        changed = factor.pct_change(fill_method=None).abs() > DIVIDEND_TOLERANCE
+        change = factor.pct_change(fill_method=None).abs()
         ex_days = raw["dividends"][t] > 0
-        unexpected = int((changed & ~ex_days).sum())
-        missed = int((ex_days & ~changed).sum())
+        dividend_yield = raw["dividends"][t] / raw["close_split_only"][t].shift()
+        unexpected = int((change.gt(DIVIDEND_TOLERANCE) & ~ex_days).sum())
+        missed = int((ex_days & ~change.ge(DIVIDEND_SHARE * dividend_yield)).sum())
         report(
             "dividends",
             t,
@@ -215,9 +220,22 @@ def validate_macro(macro_dir, series: list[str], start: str, end: str) -> pd.Dat
 
         if monthly:
             months = pd.period_range(first, last, freq="M")
-            missing = len(months.difference(dates.to_period("M")))
+            missing = [str(m) for m in months.difference(dates.to_period("M"))]
+            unknown = [m for m in missing if m not in KNOWN_GAPS.get(name, [])]
             checks.append(
-                {"check": "gaps", "ticker": name, "result": "FAIL" if missing else "PASS", "detail": f"{missing} missing months"}
+                {
+                    "check": "gaps",
+                    "ticker": name,
+                    "result": "FAIL" if unknown else "WARN" if missing else "PASS",
+                    "detail": f"{len(missing)} missing months"
+                    + (
+                        f": {', '.join(missing)} (known: not published)"
+                        if missing and not unknown
+                        else f": {', '.join(missing)}"
+                        if missing
+                        else ""
+                    ),
+                }
             )
         else:
             gap = dates.to_series().diff().max().days

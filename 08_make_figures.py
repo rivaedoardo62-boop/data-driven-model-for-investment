@@ -319,7 +319,7 @@ def fig_coverage(starts: pd.DataFrame, bounds: dict, first_signal: pd.Timestamp,
 
 
 def fig_macro(macro: dict, bounds: dict, path) -> None:
-    cpi = macro["CPIAUCSL"]
+    cpi = macro["CPIAUCSL"].asfreq("MS")  # one row per month: a month missing at the source stays missing, not skipped
     panels = [
         ("VIXCLS", macro["VIXCLS"], 25, "VIX (stress above 25)"),
         ("T10Y3M", macro["T10Y3M"], 0, "10-year minus 3-month yield, points (inverted below 0)"),

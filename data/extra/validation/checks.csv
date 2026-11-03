@@ -7,7 +7,7 @@ missing,SOXX,PASS,first price 2001-07-13 (listed after the start); 0 missing day
 stale,SOXX,PASS,longest run of identical closes: 2 days
 volume,SOXX,PASS,0 days with zero volume
 splits,SOXX,PASS,"1 splits, 2024-03-07 3:1"
-dividends,SOXX,FAIL,78 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 1
+dividends,SOXX,PASS,78 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
 weekly,SOXX,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
 outliers,SOXX,WARN,"1 moves above 20% daily or 25% weekly, kept"
 positive,IGV,PASS,min price 3.6848
@@ -16,7 +16,7 @@ missing,IGV,PASS,first price 2001-07-17 (listed after the start); 0 missing days
 stale,IGV,PASS,longest run of identical closes: 3 days
 volume,IGV,WARN,7 days with zero volume
 splits,IGV,PASS,"1 splits, 2024-03-07 5:1"
-dividends,IGV,FAIL,38 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 6
+dividends,IGV,PASS,38 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
 weekly,IGV,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
 outliers,IGV,PASS,"0 moves above 20% daily or 25% weekly, kept"
 positive,XLK,PASS,min price 4.2316
@@ -79,7 +79,7 @@ missing,BOTZ,PASS,first price 2016-09-13 (listed after the start); 0 missing day
 stale,BOTZ,PASS,longest run of identical closes: 3 days
 volume,BOTZ,WARN,3 days with zero volume
 splits,BOTZ,PASS,0 splits
-dividends,BOTZ,FAIL,14 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 1
+dividends,BOTZ,PASS,14 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
 weekly,BOTZ,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
 outliers,BOTZ,PASS,"0 moves above 20% daily or 25% weekly, kept"
 positive,SRVR,PASS,min price 18.5693
@@ -134,7 +134,7 @@ coverage,BAA10Y,PASS,"daily, 6932 values from 1999-01-04 to 2026-09-25 (0 days b
 gaps,BAA10Y,PASS,largest gap between two values: 5 days
 range,BAA10Y,PASS,"min 1.36, max 6.16; 0 values outside [0, 8]"
 coverage,CPIAUCSL,PASS,"monthly, 332 values from 1999-01-01 to 2026-09-01 (24 days before 2026-09-25)"
-gaps,CPIAUCSL,FAIL,1 missing months
+gaps,CPIAUCSL,WARN,1 missing months: 2025-10 (known: not published)
 range,CPIAUCSL,PASS,"min 164.7, max 336.298; 0 values outside [100, 500]"
 coverage,DTB3,PASS,"daily, 6938 values from 1999-01-04 to 2026-09-25 (0 days before 2026-09-25)"
 gaps,DTB3,PASS,largest gap between two values: 4 days
