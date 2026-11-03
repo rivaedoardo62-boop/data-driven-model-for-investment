@@ -11,16 +11,18 @@ Install [uv](https://docs.astral.sh/uv/) (see [docs/setup.md](docs/setup.md)), t
 
 ```bash
 uv sync                                  # environment with Python and all dependencies
-uv run python 01_download_data.py        # download the prices (optional: they are already in data/)
+uv run python 01_download_data.py        # download the prices (already in data/: do not run it again)
 uv run python 02_validate_data.py        # validate the prices: stops if a check fails
 uv run python 03_optimize_ga.py          # choose the parameters with the genetic algorithm (a few minutes)
 uv run python 04_compute_signals.py      # compute the signals
 uv run python 05_evaluate_strategy.py    # returns, metrics and charts, In-Sample and Out-of-Sample
+uv run python 06_download_extra_data.py  # AI-linked ETFs, quant funds and macro series, to evaluate the frozen strategy
 ```
 
 The data are in the repository, so the results are reproducible without downloading anything: start from
 `02_validate_data.py`. Running `01_download_data.py` again downloads the prices as Yahoo Finance gives them today, which
-may differ slightly from the saved ones (Yahoo recomputes the adjusted prices).
+may differ slightly from the saved ones (Yahoo recomputes the adjusted prices): do not run it again, the strategy is frozen
+on the saved prices.
 
 All settings are in `config.yaml`. Every script saves the settings it used next to its outputs and stops if a later
 script runs with a different `config.yaml`.
@@ -34,9 +36,10 @@ script runs with a different `config.yaml`.
 | `03_optimize_ga.py` | `data/prices/`, `data/validation/checks.csv` | `data/ga/best.yaml` (members of the vote), `members.csv`, `history.csv` |
 | `04_compute_signals.py` | `data/prices/close.csv`, `data/ga/best.yaml` | `data/signals/{sma,random,ga}.csv` |
 | `05_evaluate_strategy.py` | `data/prices/`, `data/signals/` | `data/metrics/*.csv`, `data/plots/{equity,drawdown,exposure}.html` |
+| `06_download_extra_data.py` | Yahoo Finance, FRED | `data/extra/prices/` ETFs and funds (same files as `data/prices/`), `data/extra/macro/` macro series |
 
 Shared code is in `src/`: `backtest.py` (forward returns, costs), `ensemble.py` (indicators and vote), `genetic.py`
-(genetic algorithm, DEAP), `metrics.py`, `plots.py`, `data.py`, `config.py`.
+(genetic algorithm, DEAP), `metrics.py`, `plots.py`, `data.py` (downloads and weekly tables), `config.py`.
 
 Periods (by the day each return is realized): training up to 2014-12-26, validation up to 2018-12-28 (together the
 In-Sample period), Out-of-Sample from 2018-12-31. Execution at the next open, 10 bps per trade, risk-free 2%.

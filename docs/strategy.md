@@ -143,6 +143,13 @@ lucky run. The vote keeps only what most runs agree on.
 | Survivorship bias | **Present, not solved.** The 4 stocks were chosen in 2026 among the largest companies of today, which are there because they grew. The equal weight of the 4 has an In-Sample Sharpe of 0.90 against 0.31 for SPY: the universe itself beats the market. The results are an upper bound; the comparison with the equal weight of the same stocks is the one that counts |
 | Pretrained model leakage | Not applicable: no pretrained model (no language model, no FinBERT). The genetic algorithm starts from random genomes with fixed seeds |
 
+## Additional tests
+
+Decided on 2026-11-03, before downloading their data, and listed in [experiment_log.md](experiment_log.md): the frozen
+strategy on ETFs of the AI supply chain (transfer test) and on short histories, the comparison with quantitative and
+AI-managed funds, the results by market regime (macro series from FRED) and the Sharpe ratio with the actual T-bill rate.
+They evaluate the strategy and never change it.
+
 ## Limits
 
 - Weekly decisions: no exit inside the week, and weekly drawdowns understate the daily ones.

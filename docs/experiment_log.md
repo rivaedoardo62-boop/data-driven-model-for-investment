@@ -83,3 +83,28 @@ Returns realized from 2018-12-31 to 2026-09-21, 404 weeks; strategies net of 10 
   on the rebounds. The volatility filter protects from sudden crashes, not from slow declines.
 - The gain of the training period came mostly from 2008 (-2% vs -42% for the equal weight): the period the genetic algorithm
   was fitted on. It does not repeat Out-of-Sample.
+
+## Tests after the Out-of-Sample, decided on 2026-11-03 before downloading their data
+
+The strategy stays frozen (`config.yaml`, `data/ga/best.yaml`): these tests only evaluate it, are reported whatever their
+result, and change nothing. Their data are downloaded by `06_download_extra_data.py` (settings in `extra` of `config.yaml`).
+
+1. **Transfer test.** The frozen strategy (the same 5 members and vote, no new optimization) trades the ETFs of the AI
+   supply chain with 10+ years of prices: SOXX (semiconductors), IGV (software), XLK (technology), XLU (utilities, power for
+   data centers), XLE (oil and gas), NLR (nuclear and uranium), URA (uranium). Equal weight, same execution and costs.
+   Benchmark: equal weight buy and hold of the same ETFs; SPY as market reference. Same In-Sample / Out-of-Sample dates as
+   the main strategy, each ETF from its first signal. The parameters never saw these ETFs. Question: does the timing work
+   beyond the 4 stocks it was fitted on? Limit: the ETFs are chosen in 2026 for their link with AI, a theme known to have
+   done well from 2023: only the difference with their own buy and hold is meaningful.
+2. **Short histories, secondary.** The same test on QTUM (quantum computing), BOTZ (robotics and AI), SRVR (data centers),
+   from their first signal. Less than 10 years: reported, not used for conclusions.
+3. **Peer benchmarks.** AIEQ (equities selected by AI), DBMF (managed futures, trend following), AQMIX (AQR managed futures
+   fund), bought and held, compared with the main strategy on the common Out-of-Sample weeks. Their returns are net of their
+   fees; ours only of 10 bps per trade.
+4. **Market regimes.** Each week is classified by the FRED value at the close of the signal week (latest vintage): stress if
+   VIXCLS > 25; inverted curve if T10Y3M < 0; recession if USREC = 1; rate hikes if DFF is more than 0.25 points above
+   26 weeks before; credit stress if BAA10Y is above its median over the evaluated weeks; high inflation if CPIAUCSL is more
+   than 3% above 12 months before. Recessions and inflation are known only later: the classification describes the results,
+   it is never usable as a signal. For each regime: weeks, annualized return, volatility and Sharpe ratio of the strategy and
+   of the equal weight. The sample holds only two recessions (2008-2009, 2020).
+5. **Risk-free rate.** Sharpe ratios recomputed with DTB3 (3-month T-bill) instead of the constant 2%.
