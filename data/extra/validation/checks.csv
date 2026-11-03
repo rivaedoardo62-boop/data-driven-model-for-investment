@@ -1,0 +1,141 @@
+check,ticker,result,detail
+calendar,all,PASS,6723 days from 2000-01-03 to 2026-09-25
+calendar,weeks,PASS,1395 weeks; 247 with fewer than 5 trading days (holidays)
+positive,SOXX,PASS,min price 6.3245
+ohlc,SOXX,PASS,0 days with low above or high below open/close
+missing,SOXX,PASS,first price 2001-07-13 (listed after the start); 0 missing days after it
+stale,SOXX,PASS,longest run of identical closes: 2 days
+volume,SOXX,PASS,0 days with zero volume
+splits,SOXX,PASS,"1 splits, 2024-03-07 3:1"
+dividends,SOXX,FAIL,78 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 1
+weekly,SOXX,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,SOXX,WARN,"1 moves above 20% daily or 25% weekly, kept"
+positive,IGV,PASS,min price 3.6848
+ohlc,IGV,PASS,0 days with low above or high below open/close
+missing,IGV,PASS,first price 2001-07-17 (listed after the start); 0 missing days after it
+stale,IGV,PASS,longest run of identical closes: 3 days
+volume,IGV,WARN,7 days with zero volume
+splits,IGV,PASS,"1 splits, 2024-03-07 5:1"
+dividends,IGV,FAIL,38 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 6
+weekly,IGV,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,IGV,PASS,"0 moves above 20% daily or 25% weekly, kept"
+positive,XLK,PASS,min price 4.2316
+ohlc,XLK,PASS,0 days with low above or high below open/close
+missing,XLK,PASS,first price 2000-01-03; 0 missing days after it
+stale,XLK,PASS,longest run of identical closes: 2 days
+volume,XLK,PASS,0 days with zero volume
+splits,XLK,PASS,"1 splits, 2025-12-05 2:1"
+dividends,XLK,PASS,84 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,XLK,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,XLK,PASS,"0 moves above 20% daily or 25% weekly, kept"
+positive,XLU,PASS,min price 3.2527
+ohlc,XLU,PASS,0 days with low above or high below open/close
+missing,XLU,PASS,first price 2000-01-03; 0 missing days after it
+stale,XLU,PASS,longest run of identical closes: 2 days
+volume,XLU,PASS,0 days with zero volume
+splits,XLU,PASS,"1 splits, 2025-12-05 2:1"
+dividends,XLU,PASS,108 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,XLU,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,XLU,PASS,"0 moves above 20% daily or 25% weekly, kept"
+positive,XLE,PASS,min price 4.9999
+ohlc,XLE,PASS,0 days with low above or high below open/close
+missing,XLE,PASS,first price 2000-01-03; 0 missing days after it
+stale,XLE,PASS,longest run of identical closes: 3 days
+volume,XLE,PASS,0 days with zero volume
+splits,XLE,PASS,"1 splits, 2025-12-05 2:1"
+dividends,XLE,PASS,108 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,XLE,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,XLE,WARN,"2 moves above 20% daily or 25% weekly, kept"
+positive,NLR,PASS,min price 15.8520
+ohlc,NLR,PASS,0 days with low above or high below open/close
+missing,NLR,PASS,first price 2007-08-15 (listed after the start); 0 missing days after it
+stale,NLR,PASS,longest run of identical closes: 3 days
+volume,NLR,WARN,112 days with zero volume
+splits,NLR,PASS,"1 splits, 2013-07-01 0.333333:1"
+dividends,NLR,PASS,18 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,NLR,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,NLR,PASS,"0 moves above 20% daily or 25% weekly, kept"
+positive,URA,PASS,min price 5.5832
+ohlc,URA,PASS,0 days with low above or high below open/close
+missing,URA,PASS,first price 2010-11-05 (listed after the start); 0 missing days after it
+stale,URA,PASS,longest run of identical closes: 3 days
+volume,URA,PASS,0 days with zero volume
+splits,URA,PASS,"2 splits, 2013-05-16 0.333333:1, 2015-11-18 0.5:1"
+dividends,URA,PASS,20 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,URA,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,URA,PASS,"0 moves above 20% daily or 25% weekly, kept"
+positive,QTUM,PASS,min price 17.5735
+ohlc,QTUM,PASS,0 days with low above or high below open/close
+missing,QTUM,PASS,first price 2018-09-05 (listed after the start); 0 missing days after it
+stale,QTUM,PASS,longest run of identical closes: 3 days
+volume,QTUM,WARN,2 days with zero volume
+splits,QTUM,PASS,0 splits
+dividends,QTUM,PASS,32 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,QTUM,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,QTUM,PASS,"0 moves above 20% daily or 25% weekly, kept"
+positive,BOTZ,PASS,min price 14.0968
+ohlc,BOTZ,PASS,0 days with low above or high below open/close
+missing,BOTZ,PASS,first price 2016-09-13 (listed after the start); 0 missing days after it
+stale,BOTZ,PASS,longest run of identical closes: 3 days
+volume,BOTZ,WARN,3 days with zero volume
+splits,BOTZ,PASS,0 splits
+dividends,BOTZ,FAIL,14 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 1
+weekly,BOTZ,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,BOTZ,PASS,"0 moves above 20% daily or 25% weekly, kept"
+positive,SRVR,PASS,min price 18.5693
+ohlc,SRVR,PASS,0 days with low above or high below open/close
+missing,SRVR,PASS,first price 2018-05-16 (listed after the start); 0 missing days after it
+stale,SRVR,PASS,longest run of identical closes: 2 days
+volume,SRVR,WARN,1 days with zero volume
+splits,SRVR,PASS,0 splits
+dividends,SRVR,PASS,32 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,SRVR,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,SRVR,PASS,"0 moves above 20% daily or 25% weekly, kept"
+positive,AIEQ,PASS,min price 18.3136
+ohlc,AIEQ,PASS,0 days with low above or high below open/close
+missing,AIEQ,PASS,first price 2017-10-18 (listed after the start); 0 missing days after it
+stale,AIEQ,PASS,longest run of identical closes: 2 days
+volume,AIEQ,PASS,0 days with zero volume
+splits,AIEQ,PASS,0 splits
+dividends,AIEQ,PASS,24 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,AIEQ,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,AIEQ,PASS,"0 moves above 20% daily or 25% weekly, kept"
+positive,DBMF,PASS,min price 16.1941
+ohlc,DBMF,PASS,0 days with low above or high below open/close
+missing,DBMF,PASS,first price 2019-05-08 (listed after the start); 0 missing days after it
+stale,DBMF,PASS,longest run of identical closes: 3 days
+volume,DBMF,WARN,49 days with zero volume
+splits,DBMF,PASS,0 splits
+dividends,DBMF,PASS,18 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,DBMF,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,DBMF,PASS,"0 moves above 20% daily or 25% weekly, kept"
+positive,AQMIX,PASS,min price 5.1309
+ohlc,AQMIX,PASS,0 days with low above or high below open/close
+missing,AQMIX,PASS,first price 2010-01-05 (listed after the start); 0 missing days after it
+stale,AQMIX,PASS,longest run of identical closes: 4 days
+volume,AQMIX,WARN,4207 days with zero volume
+splits,AQMIX,PASS,0 splits
+dividends,AQMIX,PASS,16 dividends; adjustment off the ex-dividend days: 0; dividends not adjusted: 0
+weekly,AQMIX,PASS,largest difference from the daily prices: 0.0e+00; same missing weeks: True
+outliers,AQMIX,PASS,"0 moves above 20% daily or 25% weekly, kept"
+coverage,VIXCLS,PASS,"daily, 7009 values from 1999-01-04 to 2026-09-25 (0 days before 2026-09-25)"
+gaps,VIXCLS,PASS,largest gap between two values: 7 days
+range,VIXCLS,PASS,"min 9.14, max 82.69; 0 values outside [5, 100]"
+coverage,T10Y3M,PASS,"daily, 6938 values from 1999-01-04 to 2026-09-25 (0 days before 2026-09-25)"
+gaps,T10Y3M,PASS,largest gap between two values: 4 days
+range,T10Y3M,PASS,"min -1.89, max 3.85; 0 values outside [-5, 6]"
+coverage,USREC,PASS,"monthly, 333 values from 1999-01-01 to 2026-09-01 (24 days before 2026-09-25)"
+gaps,USREC,PASS,0 missing months
+range,USREC,PASS,"min 0, max 1; 0 values outside [0, 1]"
+coverage,DFF,PASS,"daily, 10130 values from 1999-01-01 to 2026-09-25 (0 days before 2026-09-25)"
+gaps,DFF,PASS,largest gap between two values: 1 days
+range,DFF,PASS,"min 0.04, max 7.03; 0 values outside [-1, 25]"
+coverage,BAA10Y,PASS,"daily, 6932 values from 1999-01-04 to 2026-09-25 (0 days before 2026-09-25)"
+gaps,BAA10Y,PASS,largest gap between two values: 5 days
+range,BAA10Y,PASS,"min 1.36, max 6.16; 0 values outside [0, 8]"
+coverage,CPIAUCSL,PASS,"monthly, 332 values from 1999-01-01 to 2026-09-01 (24 days before 2026-09-25)"
+gaps,CPIAUCSL,FAIL,1 missing months
+range,CPIAUCSL,PASS,"min 164.7, max 336.298; 0 values outside [100, 500]"
+coverage,DTB3,PASS,"daily, 6938 values from 1999-01-04 to 2026-09-25 (0 days before 2026-09-25)"
+gaps,DTB3,PASS,largest gap between two values: 4 days
+range,DTB3,PASS,"min -0.05, max 6.24; 0 values outside [-1, 20]"
