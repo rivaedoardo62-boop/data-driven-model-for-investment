@@ -21,7 +21,7 @@ import pandas as pd
 import yaml
 
 from src.config import ROOT, load_config, save_used
-from src.data import FRED_URL, download_fred, download_prices
+from src.data import FRED_URL, download_fred, download_prices, macro_start
 
 
 def main() -> None:
@@ -38,9 +38,8 @@ def main() -> None:
 
     download_prices(tickers, data["start"], data["end"], data_dir / "extra" / "prices")
 
-    macro_start = (pd.Timestamp(data["start"]) - pd.DateOffset(years=1)).date().isoformat()
     for series in extra["macro"]:
-        download_fred(series, macro_start, data["end"], data_dir / "extra" / "macro" / f"{series}.csv")
+        download_fred(series, macro_start(data["start"]), data["end"], data_dir / "extra" / "macro" / f"{series}.csv")
 
     save_used({"start": data["start"], "end": data["end"], **extra}, data_dir / "extra" / "config.yaml")
     sources = {

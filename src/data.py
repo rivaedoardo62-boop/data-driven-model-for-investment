@@ -60,6 +60,11 @@ def download_prices(tickers: list[str], start: str, end: str, prices_dir) -> Non
     save(close, prices_dir / "close.csv")
 
 
+def macro_start(start: str) -> str:
+    """First day of the macro series: one year before the prices, so that yearly changes exist from the start."""
+    return (pd.Timestamp(start) - pd.DateOffset(years=1)).date().isoformat()
+
+
 def download_fred(series: str, start: str, end: str, path) -> None:
     """Download a FRED series as published today (latest vintage), from start to end included."""
     table = pd.read_csv(FRED_URL.format(series), index_col=0, parse_dates=True, storage_options={"User-Agent": "Mozilla/5.0"})
