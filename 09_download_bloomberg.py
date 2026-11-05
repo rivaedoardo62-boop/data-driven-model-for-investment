@@ -6,7 +6,8 @@ uv environment: on that PC install `pip install pandas pyarrow` and
 Its outputs are copied to data/bloomberg/ and read from there: the results are reproducible without a terminal.
 
 What it downloads (each run writes a folder, --out):
-    membership.csv         members of the SOX index (PHLX Semiconductor) and their weights at the end of every year:
+    membership.csv         members of the SOX index (PHLX Semiconductor) and their weights at the end of every year
+                           (member as Bloomberg gives it, e.g. "MU UN", and its composite ticker "MU US Equity"):
                            who was in the index at each date, so that a stock enters the test only after it entered
                            the index (the union of all members would bring back future winners)
     universe.csv, meta.csv every stock ever a member, with name, ISIN, sub-industry, country, currency, market status
@@ -19,9 +20,13 @@ What it downloads (each run writes a folder, --out):
     benchmark_sox.parquet  the SOX index, price and total return
     failed.txt             tickers or fields without data (only if any)
 
+Prices are downloaded for the composite ticker (US): one series per company, also across a change of exchange.
+
 Examples:
-    python 09_download_bloomberg.py --tickers "NVDA UW Equity" "AMD UW Equity" --out bloomberg_test    # quick test
+    python 09_download_bloomberg.py --tickers "MU US Equity" "9966620D US Equity" --out bloomberg_test   # quick test
+    python 09_download_bloomberg.py --membership-only --out bloomberg_members                        # only who/when
     python 09_download_bloomberg.py --out bloomberg_data                                              # full universe
+    python 09_download_bloomberg.py --lite --out bloomberg_data                       # the same with open/close only
     python 09_download_bloomberg.py --tickers "AAPL US Equity" "MSFT US Equity" "AMZN US Equity" \\
         "GOOG US Equity" "SPY US Equity" --out bloomberg_check                                        # Yahoo cross-check
 """
@@ -110,6 +115,12 @@ def reference_request(session, svc, securities: list[str], fields: list[str], ov
 
 
 # ---------------------------------------------------------------- universe
+def composite(member: str) -> str:
+    """ "MU UN" (NYSE) or "MU UW" (Nasdaq) -> "MU US Equity": the composite ticker follows a company across exchanges
+    (Micron moved from NYSE to Nasdaq in 2009), so that each company has one price series, not one per exchange."""
+    return f"{member.split()[0]} US Equity"
+
+
 def membership(session, svc, start: dt.date, end: dt.date) -> pd.DataFrame:
     """Members of the index and their weights at the end of every year, and today."""
     rows = []
@@ -118,13 +129,15 @@ def membership(session, svc, start: dt.date, end: dt.date) -> pd.DataFrame:
         for _, fd in reference_request(session, svc, [INDEX], ["INDX_MWEIGHT_HIST"], {"END_DATE_OVERRIDE": d.strftime("%Y%m%d")}):
             for r in bulk_rows(fd, "INDX_MWEIGHT_HIST"):
                 values = list(r.values())  # "Index Member", "Percent Weight"
+                member = str(values[0]).strip()
                 rows.append(
-                    {"date": d, "ticker": f"{str(values[0]).strip()} Equity", "weight": values[1] if len(values) > 1 else None}
+                    {"date": d, "member": member, "ticker": composite(member), "weight": values[1] if len(values) > 1 else None}
                 )
         print(f"  members on {d}: {sum(1 for r in rows if r['date'] == d)}")
     for _, fd in reference_request(session, svc, [INDEX], ["INDX_MEMBERS"]):
         for r in bulk_rows(fd, "INDX_MEMBERS"):
-            rows.append({"date": dt.date.today(), "ticker": f"{str(next(iter(r.values()))).strip()} Equity", "weight": None})
+            member = str(next(iter(r.values()))).strip()
+            rows.append({"date": dt.date.today(), "member": member, "ticker": composite(member), "weight": None})
     return pd.DataFrame(rows)
 
 
@@ -198,6 +211,8 @@ def main() -> None:
     ap.add_argument("--end", default=dt.date.today().isoformat())
     ap.add_argument("--tickers", nargs="*", help="manual list instead of the SOX members (no membership.csv)")
     ap.add_argument("--out", default="bloomberg_data")
+    ap.add_argument("--membership-only", action="store_true", help="only membership.csv, universe.csv, meta.csv: very few data")
+    ap.add_argument("--lite", action="store_true", help="daily open, close and total return only (fewer data than OHLCV)")
     a = ap.parse_args()
 
     start, end = dt.date.fromisoformat(a.start), dt.date.fromisoformat(a.end)
@@ -220,8 +235,12 @@ def main() -> None:
             for t, fd in reference_request(session, svc, tickers, REF_FIELDS)
         ]
         pd.DataFrame(meta).to_csv(out / "meta.csv", index=False)
+        print(f"Saved {out / 'meta.csv'}: check the names, a delisted ticker can be reused by another company")
+        if a.membership_only:
+            return
 
-        prices, f1 = history(session, svc, tickers, DAILY_FIELDS, start, end)
+        fields = ["PX_OPEN", "PX_LAST", "TOT_RETURN_INDEX_GROSS_DVDS"] if a.lite else DAILY_FIELDS
+        prices, f1 = history(session, svc, tickers, fields, start, end)
         save(prices, out / "prices")
         raw, f2 = history(session, svc, tickers, ["PX_LAST"], start, end, adjusted=False)
         save(raw, out / "prices_raw")
