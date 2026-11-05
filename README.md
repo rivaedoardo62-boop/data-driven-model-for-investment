@@ -20,6 +20,8 @@ uv run python 06_download_extra_data.py  # AI-linked ETFs, quant funds and macro
 uv run python 07_validate_extra_data.py  # validate the extra data: stops if a check fails
 uv run python 08_make_figures.py         # figures for the slides, in data/figures/ (see docs/figures.md)
 python 09_download_bloomberg.py          # only on a Bloomberg Terminal PC: semiconductor universe, saved in data/bloomberg/
+uv run python 10_clean_bloomberg.py      # one series per company, checks, weekly tables, features (data/bloomberg/clean/)
+uv run python 11_eda_bloomberg.py        # exploratory figures and tables (data/bloomberg/eda/)
 ```
 
 The data are in the repository, so the results are reproducible without downloading anything: start from
@@ -43,10 +45,12 @@ script runs with a different `config.yaml`.
 | `07_validate_extra_data.py` | `data/extra/` | `data/extra/validation/{checks,splits,outliers}.csv` |
 | `08_make_figures.py` | `data/prices/`, `data/signals/`, `data/ga/`, `data/metrics/`, `data/extra/` (optional) | `data/figures/*.png` |
 | `09_download_bloomberg.py` | Bloomberg Terminal (Desktop API, `blpapi`) | members of the SOX index at the end of every year, daily prices adjusted and not adjusted, dividends and splits, monthly P/E, SOX index; copied to `data/bloomberg/` |
+| `10_clean_bloomberg.py` | `data/bloomberg/raw/prices.parquet` (and `membership.csv`) | `data/bloomberg/clean/`: daily and weekly prices per company, `features.parquet`, `companies.csv`, checks |
+| `11_eda_bloomberg.py` | `data/bloomberg/clean/` | `data/bloomberg/eda/*.png`, `*.csv` |
 
 Shared code is in `src/`: `backtest.py` (forward returns, costs), `ensemble.py` (indicators and vote), `genetic.py`
 (genetic algorithm, DEAP), `metrics.py`, `plots.py`, `data.py` (downloads and weekly tables), `validation.py`
-(checks of the data), `config.py`.
+(checks of the data), `bloomberg.py` and `features.py` (semiconductor universe), `style.py` (figures), `config.py`.
 
 Periods (by the day each return is realized): training up to 2014-12-26, validation up to 2018-12-28 (together the
 In-Sample period), Out-of-Sample from 2018-12-31. Execution at the next open, 10 bps per trade, risk-free 2%.
@@ -55,11 +59,13 @@ In-Sample period), Out-of-Sample from 2018-12-31. Execution at the next open, 10
 
 | File | Content |
 |---|---|
+| [docs/bloomberg.md](docs/bloomberg.md) | Semiconductor universe from Bloomberg: cleaning, checks, exploratory analysis, limits |
 | [docs/figures.md](docs/figures.md) | The figures for the slides, each with what it shows |
 | [docs/strategy.md](docs/strategy.md) | Hypothesis, data, periods, exact signal logic, genetic algorithm, execution, benchmarks, pitfalls |
 | [docs/setup.md](docs/setup.md) | Install uv and the dependencies, run the code, add packages, what to do if something fails |
 | [docs/metrics.md](docs/metrics.md) | Execution of the signals and returns, In-Sample / Out-of-Sample split, metrics to evaluate the strategies |
 | [docs/experiment_log.md](docs/experiment_log.md) | Every configuration tried, with its result, and the Out-of-Sample result |
 | [notebooks/00_esplora_dati.ipynb](notebooks/00_esplora_dati.ipynb) | Exploration of the prices, signals and metrics saved in `data/` |
+| [notebooks/01_bloomberg.ipynb](notebooks/01_bloomberg.ipynb) | Exploration of the cleaned Bloomberg data (needs the files in `data/bloomberg/`) |
 | [resources/instructions.pdf](resources/instructions.pdf) | Text of the exam project |
 | [resources/presentation.pptx](resources/presentation.pptx) | Template of the presentation |

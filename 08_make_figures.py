@@ -9,9 +9,6 @@ Outputs: data/figures/*.png
 
 import matplotlib
 import matplotlib.dates
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import yaml
@@ -21,70 +18,24 @@ from src.backtest import execution_dates, forward_returns, strategy_returns
 from src.config import ROOT, load_config
 from src.data import read_weekly
 from src.ensemble import Indicators, signals, vote
-
-BLUE, ORANGE, RED = "#2a78d6", "#eb6834", "#e34948"
-DARK_GRAY, LIGHT_GRAY = "#5f5e58", "#9a9992"
-SURFACE, INK, MUTED, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3de"
-SHADES = {"Training": "#f0efec", "Validation": "#e4e3de", "Out-of-Sample": "#cde2fb"}
-NAMES = {"ga": "Strategy (vote of 5)", "Equal weight": "Equal weight, 4 stocks", "SPY": "SPY"}
-SERIES_COLORS = {"ga": BLUE, "Equal weight": DARK_GRAY, "SPY": LIGHT_GRAY}
-
-plt.rcParams.update(
-    {
-        "figure.facecolor": SURFACE,
-        "axes.facecolor": SURFACE,
-        "savefig.facecolor": SURFACE,
-        "axes.edgecolor": GRID,
-        "axes.labelcolor": MUTED,
-        "axes.titlesize": 11,
-        "axes.titleweight": "bold",
-        "axes.titlelocation": "left",
-        "axes.spines.top": False,
-        "axes.spines.right": False,
-        "axes.grid": True,
-        "grid.color": GRID,
-        "grid.linewidth": 0.6,
-        "axes.axisbelow": True,
-        "xtick.color": MUTED,
-        "ytick.color": MUTED,
-        "text.color": INK,
-        "font.size": 9.5,
-        "legend.frameon": False,
-        "lines.linewidth": 1.6,
-    }
+from src.style import (
+    BLUE,
+    DARK_GRAY,
+    INK,
+    LIGHT_GRAY,
+    MUTED,
+    ORANGE,
+    RED,
+    SHADES,
+    SURFACE,
+    plain_log_axis,
+    plt,
+    save,
+    shade_periods,
 )
 
-
-def save(fig, path) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(path, dpi=200, bbox_inches="tight")
-    plt.close(fig)
-    print(f"Saved {path.relative_to(ROOT)}")
-
-
-def shade_periods(ax, bounds: dict, label: bool = False) -> None:
-    """Background of the Training / Validation / Out-of-Sample periods."""
-    for name, (start, end) in bounds.items():
-        ax.axvspan(start, end, color=SHADES[name], zorder=0, lw=0)
-        if label:
-            ax.text(
-                start + (end - start) / 2,
-                1.01,
-                name,
-                transform=ax.get_xaxis_transform(),
-                ha="center",
-                va="bottom",
-                color=MUTED,
-                fontsize=9,
-            )
-
-
-def plain_log_axis(ax) -> None:
-    """Log scale with plain numbers (100, 200, 500) instead of powers of 10."""
-    ax.set_yscale("log")
-    ax.yaxis.set_major_locator(matplotlib.ticker.LogLocator(subs=(1, 2, 5)))
-    ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:,.0f}"))
-    ax.yaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+NAMES = {"ga": "Strategy (vote of 5)", "Equal weight": "Equal weight, 4 stocks", "SPY": "SPY"}
+SERIES_COLORS = {"ga": BLUE, "Equal weight": DARK_GRAY, "SPY": LIGHT_GRAY}
 
 
 def fig_periods(spy: pd.Series, bounds: dict, weeks: dict, path) -> None:

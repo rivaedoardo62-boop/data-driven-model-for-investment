@@ -12,6 +12,20 @@ extra: # used only to evaluate the frozen strategy, never to choose it (06_downl
     quant_funds: [AIEQ, DBMF, AQMIX] # peer benchmarks, bought and held, never traded
   macro: [VIXCLS, T10Y3M, USREC, DFF, BAA10Y, CPIAUCSL, DTB3] # FRED series, to describe the market regimes
 
+bloomberg: # semiconductor universe of the SOX index (09_download_bloomberg.py); files in data/bloomberg/, not on GitHub
+  dir: data/bloomberg
+  exited_after: 7 # days without prices before data.end after which a company counts as delisted (exit at its last price)
+  features: # weeks of the descriptive features (src/features.py), computed with the prices up to each Friday
+    short_return: 4
+    momentum: [52, 4] # return from 52 to 4 weeks ago (the last month is left out)
+    volatility: 26
+    volatility_ratio: [10, 52] # recent against long volatility, the idea of the volatility indicator of the strategy
+    trend: 26 # close against its moving average
+    high: 52 # distance from the highest close
+    beta: 52 # against the equal weight of the universe
+    liquidity: 4 # average daily traded value
+  winsorize: 0.01 # cut each feature at its 1% and 99% cross-sectional quantiles before the z-score
+
 strategies:
   sma: { window: 10 } # weeks
   random: { seed: 42 }

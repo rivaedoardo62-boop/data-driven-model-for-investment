@@ -21,3 +21,7 @@ __pycache__/
 
 # Claude Code local settings
 .claude/
+
+# Bloomberg data: licensed, never on GitHub (the repository is public). Keep them locally and in the submitted zip.
+data/bloomberg/*
+!data/bloomberg/README.md
