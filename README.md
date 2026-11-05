@@ -19,6 +19,7 @@ uv run python 05_evaluate_strategy.py    # returns, metrics and charts, In-Sampl
 uv run python 06_download_extra_data.py  # AI-linked ETFs, quant funds and macro series, to evaluate the frozen strategy
 uv run python 07_validate_extra_data.py  # validate the extra data: stops if a check fails
 uv run python 08_make_figures.py         # figures for the slides, in data/figures/ (see docs/figures.md)
+python 09_download_bloomberg.py          # only on a Bloomberg Terminal PC: semiconductor universe, saved in data/bloomberg/
 ```
 
 The data are in the repository, so the results are reproducible without downloading anything: start from
@@ -41,6 +42,7 @@ script runs with a different `config.yaml`.
 | `06_download_extra_data.py` | Yahoo Finance, FRED | `data/extra/prices/` ETFs and funds (same files as `data/prices/`), `data/extra/macro/` macro series |
 | `07_validate_extra_data.py` | `data/extra/` | `data/extra/validation/{checks,splits,outliers}.csv` |
 | `08_make_figures.py` | `data/prices/`, `data/signals/`, `data/ga/`, `data/metrics/`, `data/extra/` (optional) | `data/figures/*.png` |
+| `09_download_bloomberg.py` | Bloomberg Terminal (Desktop API, `blpapi`) | members of the SOX index at the end of every year, daily prices adjusted and not adjusted, dividends and splits, monthly P/E, SOX index; copied to `data/bloomberg/` |
 
 Shared code is in `src/`: `backtest.py` (forward returns, costs), `ensemble.py` (indicators and vote), `genetic.py`
 (genetic algorithm, DEAP), `metrics.py`, `plots.py`, `data.py` (downloads and weekly tables), `validation.py`
