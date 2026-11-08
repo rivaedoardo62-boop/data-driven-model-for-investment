@@ -5,12 +5,8 @@ data:
   end: "2026-09-25" # included, a Friday
   data_dir: data
 
-extra: # used only to evaluate the frozen strategy, never to choose it (06_download_extra_data.py, same start and end as data)
-  groups: # ETFs and funds from Yahoo Finance
-    ai_long: [SOXX, IGV, XLK, XLU, XLE, NLR, URA] # traded by the frozen strategy: AI supply chain, 10+ years of prices
-    ai_short: [QTUM, BOTZ, SRVR] # the same test on short histories (quantum, robotics and AI, data centers): secondary
-    quant_funds: [AIEQ, DBMF, AQMIX] # peer benchmarks, bought and held, never traded
-  macro: [VIXCLS, T10Y3M, USREC, DFF, BAA10Y, CPIAUCSL, DTB3] # FRED series, to describe the market regimes
+extra: # macro series, used only to describe the market regimes, never as a signal (06_download_extra_data.py)
+  macro: [VIXCLS, T10Y3M, USREC, DFF, BAA10Y, CPIAUCSL, DTB3] # FRED series, same start and end as data
 
 bloomberg: # semiconductor universe of the SOX index (09_download_bloomberg.py); files in data/bloomberg/, not on GitHub
   dir: data/bloomberg
@@ -25,6 +21,14 @@ bloomberg: # semiconductor universe of the SOX index (09_download_bloomberg.py);
     beta: 52 # against the equal weight of the universe
     liquidity: 4 # average daily traded value
   winsorize: 0.01 # cut each feature at its 1% and 99% cross-sectional quantiles before the z-score
+
+longshort: # final strategy: long/short on the SOX members (src/longshort.py, 12_optimize_longshort.py); periods and GA as ga
+  features: [return_4w, momentum_52_4, trend_26w, from_high_52w, volatility_26w, volatility_ratio, beta_52w]
+  quantile: 0.2 # long the top 20% of the scores, short the bottom 20%
+  min_companies: 10 # no position in a week with fewer companies in the universe
+  sizing: dollar # dollar: half long, half short; beta: sides sized so that the 52-week beta of the portfolio is zero
+  borrow_bps_year: 50 # fee for borrowing the shares sold short, per year, on the short side
+  random_search_seed: 0
 
 strategies:
   sma: { window: 10 } # weeks

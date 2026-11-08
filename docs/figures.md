@@ -56,11 +56,7 @@ The members of the genetic algorithm (blue) are not better than members drawn at
 backtests (orange), and a high training Sharpe does not predict a high validation Sharpe. The honest reading: on these 4
 stocks almost every rule that stays mostly long works, so the optimization has little to find.
 
-## 6. Extra data (after `06_download_extra_data.py`)
-
-`coverage.png`: from when each ETF, fund and macro series has data. An empty space before a bar is a later listing (for
-example URA starts in 2010), not a missing price: this is what the "Missing closes" numbers printed by
-`06_download_extra_data.py` count. Blue bars have 10 years or more of signals after the 52-week warm-up.
+## 6. Market regimes (after `06_download_extra_data.py`)
 
 `macro.png`: VIX, yield curve, Fed funds rate, credit spread and inflation, with the recessions in gray and the thresholds
 of the market regimes decided in [experiment_log.md](experiment_log.md). They describe the periods, they never enter the

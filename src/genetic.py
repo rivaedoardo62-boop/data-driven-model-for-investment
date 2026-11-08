@@ -37,17 +37,20 @@ def decode(genome: list[float], bounds: dict) -> dict:
     return {"windows": windows, "weights": weights, "threshold": round(genome[-1] - 0.5, 4)}
 
 
-def run(evaluate, cfg: dict, seed: int):
-    """One run of the genetic algorithm: returns the best genome found and the log of the generations."""
+def run(evaluate, cfg: dict, seed: int, n_genes: int = N_GENES):
+    """One run of the genetic algorithm: returns the best genome found and the log of the generations.
+
+    n_genes: length of the genome (9 for the ensemble of src/ensemble.py, one per feature for src/longshort.py).
+    """
     random.seed(seed)  # DEAP draws its random numbers from the random module
 
     toolbox = base.Toolbox()
     toolbox.register("gene", random.random)
-    toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.gene, N_GENES)
+    toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.gene, n_genes)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
     toolbox.register("evaluate", lambda genome: (evaluate(genome),))
     toolbox.register("mate", tools.cxSimulatedBinaryBounded, eta=ETA_CROSSOVER, low=0.0, up=1.0)
-    toolbox.register("mutate", tools.mutPolynomialBounded, eta=ETA_MUTATION, low=0.0, up=1.0, indpb=1 / N_GENES)
+    toolbox.register("mutate", tools.mutPolynomialBounded, eta=ETA_MUTATION, low=0.0, up=1.0, indpb=1 / n_genes)
     toolbox.register("select", tools.selTournament, tournsize=cfg["tournament"])
 
     stats = tools.Statistics(lambda genome: genome.fitness.values[0])

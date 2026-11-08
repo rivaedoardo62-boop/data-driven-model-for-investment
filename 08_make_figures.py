@@ -3,13 +3,12 @@
 Colors: blue is always the strategy (ga), grays the benchmarks; orange marks the other side of a comparison.
 
 Inputs:  data/prices/, data/signals/ga.csv, data/ga/{best.yaml,members.csv}, data/metrics/returns.csv
-         data/extra/ (optional: the coverage and macro figures are drawn only after 06_download_extra_data.py)
+         data/extra/macro/ (optional: the macro figure is drawn only after 06_download_extra_data.py)
 Outputs: data/figures/*.png
 """
 
 import matplotlib
 import matplotlib.dates
-import numpy as np
 import pandas as pd
 import yaml
 
@@ -236,39 +235,6 @@ def fig_ga_vs_random(members: pd.DataFrame, votes: dict, benchmark: float, path)
     save(fig, path)
 
 
-def fig_coverage(starts: pd.DataFrame, bounds: dict, first_signal: pd.Timestamp, path) -> None:
-    fig, ax = plt.subplots(figsize=(10, 0.28 * len(starts) + 1.2))
-    shade_periods(ax, bounds, label=True)
-    y = np.arange(len(starts))[::-1]
-    warmup = pd.Timedelta(weeks=52)  # the strategy needs 52 weeks of prices before its first signal
-    long_enough = starts["last"] - starts["first"] - warmup >= pd.Timedelta(days=3652)
-    colors = [
-        LIGHT_GRAY if group.startswith("macro") else BLUE if long else ORANGE for group, long in zip(starts["group"], long_enough)
-    ]
-    ax.barh(
-        y,
-        (starts["last"] - starts["first"]).dt.days,
-        left=starts["first"],
-        height=0.6,
-        color=colors,
-    )
-    ax.set_yticks(y, [f"{name}  ({group})" for name, group in zip(starts.index, starts["group"])], fontsize=8)
-    ax.axvline(first_signal, color=INK, lw=0.8)
-    ax.text(first_signal, -1.2, " first signal of the strategy", fontsize=8, va="center")
-    ax.grid(axis="y", visible=False)
-    ax.legend(
-        handles=[
-            matplotlib.patches.Patch(color=BLUE, label="10+ years of signals"),
-            matplotlib.patches.Patch(color=ORANGE, label="fewer than 10 years"),
-            matplotlib.patches.Patch(color=LIGHT_GRAY, label="macro series"),
-        ],
-        loc="upper left",
-        bbox_to_anchor=(1.0, 1.0),
-    )
-    ax.set_title("Data available: an empty cell before a bar is a later listing, not a missing price", pad=22)
-    save(fig, path)
-
-
 def fig_macro(macro: dict, bounds: dict, path) -> None:
     cpi = macro["CPIAUCSL"].asfreq("MS")  # one row per month: a month missing at the source stays missing, not skipped
     panels = [
@@ -372,23 +338,14 @@ def main() -> None:
     benchmark = metrics.sharpe_ratio(returns.loc[split["validation"].values, "Equal weight"], risk_free)
     fig_ga_vs_random(members, votes, benchmark, out / "ga_vs_random.png")
 
-    extra_dir = data_dir / "extra"
-    if (extra_dir / "prices" / "close.csv").exists():
-        all_close = pd.concat([close, read_weekly(extra_dir / "prices" / "close.csv")], axis=1).droplevel("date_open")
-        groups = {t: "traded" for t in tickers} | {cfg["data"]["benchmark"]: "benchmark"}
-        groups |= {t: group for group, members_ in cfg["extra"]["groups"].items() for t in members_}
-        rows = {t: (all_close[t].first_valid_index(), all_close[t].last_valid_index(), groups[t]) for t in groups}
+    macro_dir = data_dir / "extra" / "macro"
+    if macro_dir.exists():
         macro = {
-            name: pd.read_csv(extra_dir / "macro" / f"{name}.csv", index_col=0, parse_dates=True)[name]
-            for name in cfg["extra"]["macro"]
+            name: pd.read_csv(macro_dir / f"{name}.csv", index_col=0, parse_dates=True)[name] for name in cfg["extra"]["macro"]
         }
-        rows |= {name: (s.index[0], s.index[-1], "macro, FRED") for name, s in macro.items()}
-        starts = pd.DataFrame(rows, index=["first", "last", "group"]).T
-        starts[["first", "last"]] = starts[["first", "last"]].apply(pd.to_datetime)
-        fig_coverage(starts, bounds, realized.index[0][1], out / "coverage.png")
         fig_macro(macro, bounds, out / "macro.png")
     else:
-        print("data/extra/ not found: coverage.png and macro.png skipped (run 06_download_extra_data.py)")
+        print("data/extra/macro/ not found: macro.png skipped (run 06_download_extra_data.py)")
 
 
 if __name__ == "__main__":

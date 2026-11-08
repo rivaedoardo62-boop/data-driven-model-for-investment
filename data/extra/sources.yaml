@@ -1,4 +1,3 @@
 downloaded: '2026-11-03'
-prices: Yahoo Finance, yfinance 1.7.0, auto_adjust=True
 macro: https://fred.stlouisfed.org/graph/fredgraph.csv?id=<series> (latest vintage,
   not point-in-time)

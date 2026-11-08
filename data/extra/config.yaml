@@ -1,21 +1,4 @@
 end: '2026-09-25'
-groups:
-  ai_long:
-  - SOXX
-  - IGV
-  - XLK
-  - XLU
-  - XLE
-  - NLR
-  - URA
-  ai_short:
-  - QTUM
-  - BOTZ
-  - SRVR
-  quant_funds:
-  - AIEQ
-  - DBMF
-  - AQMIX
 macro:
 - VIXCLS
 - T10Y3M

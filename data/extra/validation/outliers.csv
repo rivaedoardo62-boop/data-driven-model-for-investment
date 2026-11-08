@@ -1,4 +1,0 @@
-ticker,frequency,date,return,split_day
-SOXX,weekly,2001-09-21,-0.2551134833477121,False
-XLE,daily,2020-03-09,-0.20141158926509983,False
-XLE,weekly,2008-10-10,-0.2518531645345744,False

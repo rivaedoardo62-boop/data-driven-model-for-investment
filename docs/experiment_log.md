@@ -108,3 +108,56 @@ result, and change nothing. Their data are downloaded by `06_download_extra_data
    it is never usable as a signal. For each regime: weeks, annualized return, volatility and Sharpe ratio of the strategy and
    of the equal weight. The sample holds only two recessions (2008-2009, 2020).
 5. **Risk-free rate.** Sharpe ratios recomputed with DTB3 (3-month T-bill) instead of the constant 2%.
+
+## Change of plan, decided on 2026-11-08 before running any of the tests above
+
+The strategy on AAPL, MSFT, AMZN, GOOG becomes the **pilot**: its two attempts and its Out-of-Sample result stay as
+reported above. Its main lessons: the universe was chosen with hindsight (survivorship bias), and the genetic algorithm
+did not beat random parameters. The **final strategy** is a long/short strategy on semiconductors, on a universe without
+survivorship bias (the members of the SOX index at each date, from Bloomberg, delisted companies included).
+
+Tests 1 to 3 above (ETFs and quantitative funds) are dropped before being run, with their data; tests 4 (market regimes)
+and 5 (T-bill risk-free rate) apply to the final strategy.
+
+## Final strategy: design, written on 2026-11-08 before computing any of its results
+
+Only the training period is used to choose; the validation period only evaluates; the Out-of-Sample period is opened
+once, after this design is frozen. Items marked *to confirm* are decided by the group before the first run on the
+point-in-time universe.
+
+| Item | Choice |
+|---|---|
+| Hypothesis | Inside one cyclical industry, the dispersion between winners and losers is large (still-listed companies earned a median 10.6% a year, those that left 5.8%): ranking the companies on price-based features and holding the best against the worst earns a return that does not depend on the direction of the sector |
+| Universe | Each week, the companies in the SOX index at the latest year-end composition (`membership.csv`), with a close and every feature; delisted companies sold at their last price |
+| Features | Seven, with the prices up to the Friday close (`src/features.py`): return of 4 weeks, momentum 52-4 weeks, trend 26 weeks, distance from the 52-week high, volatility 26 weeks, volatility ratio 10/52 weeks, beta 52 weeks; winsorized at 1%/99% and z-scored across the universe of each week (*to confirm*: size and liquidity left out) |
+| Score and signal | Score = weighted average of the z-scores, weights in [-1, 1]; +1 for the top 20% of the scores, -1 for the bottom 20%, 0 otherwise (*to confirm*: 20%); no position with fewer than 10 companies |
+| Position sizing | Half of the capital on the longs, half on the shorts, equally within each side: dollar neutral, gross exposure 100%, no leverage |
+| Execution | As the pilot: signal after the Friday close, executed at the next open, held to the following open |
+| Costs | 10 bps on the capital traded; 0.5% a year on the short side for borrowing the shares (*to confirm*) |
+| Optimization | Genetic algorithm (same settings as the pilot, 5 seeds), 7 genes = the weights; fitness = Sharpe ratio on the training period, net of costs. Final weights = average of the 5 members (normalized). Control: random search with the same budget, reported, never chosen |
+| Periods | Training: returns realized up to 2014-12-26 (from the first week with 52 weeks of features, 2001); validation: 2014-12-29 to 2018-12-28; Out-of-Sample: from 2018-12-31 |
+| Risk-free | The returns are already in excess of cash (collateral interest not counted): Sharpe ratio with a risk-free rate of 0 |
+| Benchmarks | Cash (zero) for a dollar-neutral strategy; equal weight, long only, of the same universe; SPY |
+| Evaluation | All the metrics of `docs/metrics.md`; for the market-neutral bonus: Out-of-Sample beta and correlation to SPY, average return in the weeks SPY falls; block bootstrap of the Out-of-Sample Sharpe ratio; tests 4 and 5 above |
+
+## Development run, 2026-11-08: provisional universe, training period only
+
+`12_optimize_longshort.py` run on every company with a price (the point-in-time composition is not downloaded yet, so
+the universe holds future members: development only). Only training results were computed and looked at; nothing of the
+validation or Out-of-Sample periods.
+
+| | Training Sharpe (risk-free 0, net of costs) |
+|---|---|
+| Genetic algorithm, 5 members | 1.13 to 1.33 |
+| Genetic algorithm, average weights (the strategy) | 1.13 |
+| Random search, 5 members / average | 0.89 to 1.10 / 0.88 |
+
+Findings:
+- Unlike the pilot, the members agree on the sign of five weights: momentum 52-4 (+0.72 to +0.99), volatility 26 weeks
+  (+0.82 to +1.00), return of 4 weeks (+0.17 to +0.74), trend 26 weeks (-0.29 to -0.66), distance from the 52-week high
+  (-0.29 to -0.90). The volatility ratio and the beta are not identified.
+- Not market neutral: long the most volatile companies and short the calmest gives a beta of 0.24 to SPY (correlation
+  0.32) and an average loss of 0.25% in the weeks SPY falls. Dollar neutral is not beta neutral.
+- The training return leans on a few years: 2001 (+49%), 2002 (+36%) and 2009 (+79%, the rebound of the companies hit
+  hardest); 2008, 2011 and 2014 are negative.
+- Turnover: the capital is traded about 15 times a year, 1.5% a year of costs at 10 bps.
