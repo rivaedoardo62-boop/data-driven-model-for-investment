@@ -161,3 +161,16 @@ Findings:
 - The training return leans on a few years: 2001 (+49%), 2002 (+36%) and 2009 (+79%, the rebound of the companies hit
   hardest); 2008, 2011 and 2014 are negative.
 - Turnover: the capital is traded about 15 times a year, 1.5% a year of costs at 10 bps.
+
+Same development run with the sides sized to a zero 52-week beta (option `sizing: beta`), training only:
+
+| Training | Dollar neutral (logged design) | Beta neutral |
+|---|---|---|
+| Sharpe (average weights) | 1.13 | 0.84 |
+| Annual return | 14.9% | 10.3% |
+| Beta / correlation to SPY | 0.24 / 0.32 | 0.17 / 0.24 |
+| Average week when SPY falls / rises | -0.25% / +0.72% | -0.18% / +0.52% |
+| 2008 | -8% | -20% |
+
+The beta neutral sizing does not make the strategy market neutral (the trailing beta of the most volatile companies is
+unstable) and lowers the Sharpe ratio: the design keeps the dollar neutral sizing.
