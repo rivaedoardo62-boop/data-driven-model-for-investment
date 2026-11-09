@@ -61,11 +61,14 @@ def main() -> None:
     tables = bloomberg.weekly_tables(daily, end, bb["exited_after"])
     companies = bloomberg.summary(daily, end, bb["exited_after"])
     feats = features.panel(
-        features.compute(tables["close"], tables["market_cap"], tables["traded_value"], bb["features"]), bb["winsorize"]
+        features.compute(
+            tables["close"], tables["market_cap"], tables["traded_value"], tables["overnight"], tables["daytime"], bb["features"]
+        ),
+        bb["winsorize"],
     )
 
     save(daily.reset_index(), clean / "daily.parquet", index=False)
-    for name in ["open", "close", "market_cap", "traded_value"]:
+    for name in ["open", "close", "market_cap", "traded_value", "overnight", "daytime"]:
         save(tables[name], clean / f"{name}.csv")
     if (raw_dir / "membership.csv").exists():
         in_index = bloomberg.index_membership(

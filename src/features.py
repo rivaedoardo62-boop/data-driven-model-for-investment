@@ -13,6 +13,12 @@ would be a new strategy, to be designed on the training period only.
     beta_52w           beta of the weekly returns against the equal weight of the universe, last 52 weeks
     log_market_cap     log of the market value (millions)
     log_traded_value   log of the average daily traded value of the last 4 weeks (millions)
+    overnight_momentum_52_4, daytime_momentum_52_4
+                       the momentum 52-4 split into its overnight part (sum of the log returns from each close to the next
+                       open) and its daytime part (open to close), as in Lou, Polk and Skouras (2019), "A tug of war:
+                       overnight versus intraday expected returns"
+    overnight_return_4w, daytime_return_4w
+                       the same split of the return of the last 4 weeks
 
 Pre-processing, week by week across companies (so that no week uses the others): each feature is cut at its 1% and 99%
 quantiles (winsorized) and turned into a z-score (`<feature>_z`), comparable across weeks and features.
@@ -24,8 +30,15 @@ import pandas as pd
 MIN_COMPANIES = 5  # z-scores need at least this many companies in the week
 
 
-def compute(close: pd.DataFrame, market_cap: pd.DataFrame, traded_value: pd.DataFrame, cfg: dict) -> dict[str, pd.DataFrame]:
-    """Raw features, one table (weeks x companies) each."""
+def compute(
+    close: pd.DataFrame,
+    market_cap: pd.DataFrame,
+    traded_value: pd.DataFrame,
+    overnight: pd.DataFrame,
+    daytime: pd.DataFrame,
+    cfg: dict,
+) -> dict[str, pd.DataFrame]:
+    """Raw features, one table (weeks x companies) each. overnight and daytime: weekly sums of daily log returns."""
     r = close.pct_change(fill_method=None)
     market = r.mean(axis=1)  # equal weight of the companies with a return in the week
     far, near = cfg["momentum"]
@@ -41,6 +54,10 @@ def compute(close: pd.DataFrame, market_cap: pd.DataFrame, traded_value: pd.Data
         "beta_52w": r.rolling(n).cov(market).div(market.rolling(n).var(), axis=0),
         "log_market_cap": np.log(market_cap.where(market_cap > 0)),
         "log_traded_value": np.log(traded_value.rolling(cfg["liquidity"]).mean().where(lambda x: x > 0)),
+        "overnight_momentum_52_4": overnight.shift(near).rolling(far - near).sum(),
+        "daytime_momentum_52_4": daytime.shift(near).rolling(far - near).sum(),
+        "overnight_return_4w": overnight.rolling(cfg["short_return"]).sum(),
+        "daytime_return_4w": daytime.rolling(cfg["short_return"]).sum(),
     }
     return {name: table.replace([np.inf, -np.inf], np.nan) for name, table in out.items()}
 

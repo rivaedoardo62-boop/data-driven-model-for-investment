@@ -174,3 +174,31 @@ Same development run with the sides sized to a zero 52-week beta (option `sizing
 
 The beta neutral sizing does not make the strategy market neutral (the trailing beta of the most volatile companies is
 unstable) and lowers the Sharpe ratio: the design keeps the dollar neutral sizing.
+
+## Overnight and daytime features, decided on 2026-11-09 before any validation or Out-of-Sample result
+
+Following Lou, Polk and Skouras (2019), "A tug of war: overnight versus intraday expected returns" (Journal of
+Financial Economics), each daily return is split into its overnight part (previous close to open) and its daytime part
+(open to close). Check on the training period only (2001-2014, provisional universe): long the 20% highest, short the
+20% lowest of each feature, return of the next week from Monday open to the following Monday open, before costs.
+
+| Feature | Overnight part | Daytime part | Total (what we earn) | t of the total |
+|---|---|---|---|---|
+| Momentum 52-4 weeks | -7.4% (t -3.5) | +2.3% (t 0.8) | -5.1% | -1.5 |
+| Return of 4 weeks | -14.3% (t -7.3) | +13.7% (t 4.6) | -0.6% | -0.2 |
+| Momentum 52-4, overnight part only | +24.0% (t 12.4) | -16.8% (t -6.6) | +7.2% | 2.5 |
+| Momentum 52-4, daytime part only | -20.4% (t -10.0) | +14.5% (t 4.9) | -5.9% | -1.9 |
+| Return of 4 weeks, overnight part only | +22.2% (t 12.0) | -19.2% (t -7.9) | +3.0% | 1.1 |
+| Return of 4 weeks, daytime part only | -26.6% (t -13.6) | +23.7% (t 8.3) | -2.9% | -1.0 |
+
+Findings:
+- The tug of war is strong in semiconductors: companies that rose overnight keep rising overnight and fall in the day,
+  and the other way round. The two parts mostly cancel; we hold from open to open, so we earn only the total.
+- On the total, only the overnight part of momentum is significant (+7.2% a year, t 2.5); the usual momentum loses.
+- Past daytime gains reverse a little, past overnight gains continue a little: the usual one-month reversal mixes two
+  opposite effects.
+
+Decision: the momentum 52-4 and the 4-week return of the design are replaced by their overnight and daytime parts
+(9 features, `longshort.features` in `config.yaml`). Every part uses only the days up to the Friday close (the weekend
+overnight belongs to the next week). Data check: the opens of Bloomberg exist on every day with a close; overnight plus
+daytime equals the close-to-close return exactly (`10_clean_bloomberg.py`).

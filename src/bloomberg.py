@@ -134,6 +134,9 @@ def weekly_tables(daily: pd.DataFrame, end: pd.Timestamp, exited_after: int) -> 
     open, close            first open and last close of the week
     market_cap             last market value of the week, millions
     traded_value           average daily close x volume of the week, millions
+    overnight, daytime     sums of the daily log returns from the previous close to the open (overnight) and from the
+                           open to the close (daytime), by the week of the day: at the Friday close of week t the
+                           overnight returns up to that Friday's open are known; the weekend gap belongs to week t+1
     A company whose prices stop more than exited_after days before end has left the market (acquired, merged, bankrupt):
     its last close becomes the open of the following week, so that a position held in its last week is sold at that price
     (without it the last move, e.g. the fall before a bankruptcy, would be lost).
@@ -147,6 +150,9 @@ def weekly_tables(daily: pd.DataFrame, end: pd.Timestamp, exited_after: int) -> 
         "close": resampled.last()["close"],
         "market_cap": resampled.last()["market_cap"],
         "traded_value": (wide["close"] * wide["volume"] / 1e6).resample("W-FRI").mean(),
+        # from the last available close of the company (a day without trades does not break the chain)
+        "overnight": np.log(wide["open"] / wide["close"].ffill().shift(1)).resample("W-FRI").sum(min_count=1),
+        "daytime": np.log(wide["close"] / wide["open"]).resample("W-FRI").sum(min_count=1),
     }
     last_day = wide["close"].apply(lambda s: s.last_valid_index())
     for company, day in last_day.items():

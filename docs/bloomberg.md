@@ -18,7 +18,7 @@ per exchange line (102 lines). Its limits are listed at the end; the current scr
 | Dividend adjustment | Daily return of the adjusted price against the total return index of Bloomberg | Equal for every company (e.g. Intel 3.25% a year for both): the prices include dividends |
 | Exits | A company whose prices stop before the end is sold at its last price, in the week after | 30 of 82 companies left the market (acquired, merged or bankrupt): keeping their last move matters (Wolfspeed falls from 2.24 to 1.21 in its last week, SunEdison ends at 0.34) |
 | Weekly tables | First open and last close of each week, labeled (Monday, Friday) | The same format as `data/prices`, so `src/` works on them unchanged |
-| Features | Nine features per company and week (`src/features.py`), with the prices up to that Friday only | Cut at the 1% and 99% quantiles and z-scored week by week: no week uses information from another |
+| Features | Thirteen features per company and week (`src/features.py`), with the prices up to that Friday only, among them the overnight and daytime parts of momentum and of the 4-week return | Cut at the 1% and 99% quantiles and z-scored week by week: no week uses information from another |
 
 ## What the warnings mean
 
