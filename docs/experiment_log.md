@@ -202,3 +202,16 @@ Decision: the momentum 52-4 and the 4-week return of the design are replaced by 
 (9 features, `longshort.features` in `config.yaml`). Every part uses only the days up to the Friday close (the weekend
 overnight belongs to the next week). Data check: the opens of Bloomberg exist on every day with a close; overnight plus
 daytime equals the close-to-close return exactly (`10_clean_bloomberg.py`).
+
+Development run with the 9 features (provisional universe, training only):
+
+| Training Sharpe (risk-free 0, net of costs) | 7 features | 9 features (overnight / daytime split) |
+|---|---|---|
+| Genetic algorithm, 5 members | 1.13 to 1.33 | 0.86 to 1.06 |
+| Genetic algorithm, average weights | 1.13 | 0.92 |
+| Random search, average weights | 0.88 | 0.71 |
+
+With 9 features the members agree only on volatility (positive in all 5) and distance from the 52-week high (negative in
+all 5); the overnight part of momentum is positive in 4 of 5; the daytime parts and the 4-week parts change sign. More
+features did not help: with the same budget the search is noisier and the average of the members dilutes them. The
+feature set is decided by the group before the run on the point-in-time universe.
