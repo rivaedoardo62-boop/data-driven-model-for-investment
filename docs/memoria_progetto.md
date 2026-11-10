@@ -1,9 +1,23 @@
 # Memoria del progetto
 
 Riassunto di lavoro del gruppo (4 persone) per il progetto di metà corso di *Data-Driven Models for Investment 2026-27*
-(LUISS): cosa abbiamo fatto, cosa abbiamo deciso e perché, a che punto siamo. Aggiornato al **10 novembre 2026**.
+(LUISS): cosa abbiamo fatto, cosa abbiamo deciso e perché, a che punto siamo. Aggiornato al **10 novembre 2026** (sera).
 I dettagli tecnici e i numeri completi sono nei documenti in inglese della cartella `docs/`, soprattutto
 [experiment_log.md](experiment_log.md), che è il registro ufficiale di ogni tentativo.
+
+## Aggiornamento del 10 novembre: cambio di progetto
+
+- **Il progetto finale è la pipeline di Filippo** (repo `filpo-ops/data-driven-models-for-investments`): machine learning
+  (logistica + gradient boosting) e momentum sui semiconduttori, Out-of-Sample dal 2018 mai eseguito. Il codice è solo
+  sul computer di Filippo: arriva come zip in chat e si riprende seguendo il documento di passaggio, un passo alla volta.
+- **Questa repo diventa un archivio**: non si cancella nulla. Il long/short congelato qui non è mai stato eseguito su
+  validation e Out-of-Sample. Pezzi riutilizzabili: controlli sui dati, indicatori notte/giorno, pulizia Bloomberg.
+- **Idea stagionale scartata** (short da novembre a gennaio, long dalla primavera): sul 2001-2017 novembre-gennaio sono i
+  mesi migliori (semiconduttori +3,1% al mese contro +1,15%; SPY +0,8% contro +0,5%), e la regola perde il 5,1% all'anno
+  contro il +15% di chi resta long. Da citare nella presentazione come idea verificata e scartata.
+- **Urgente, licenza Bloomberg**: il `prices.parquet` caricato e poi cancellato il 9 novembre sulla repo pubblica di
+  Filippo è ancora scaricabile dalla storia (commit `4ac81b6`), come `meta.csv`. Filippo rende privata la repo oggi
+  (Settings, Danger Zone, Change visibility).
 
 ## 1. Il compito
 

@@ -244,3 +244,16 @@ Findings, written before any validation or Out-of-Sample result:
   4 runs of 5 next to the other features: its premium on its own probably came from its link with volatility.
 - The training gain comes from 2001-2003 and 2009 (+81%); from 2010 to 2014 the strategy is flat while the equal weight
   rises. A weak validation or Out-of-Sample result would not be a surprise.
+
+## 2026-11-10: this repository becomes an archive
+
+The group's final project is the pipeline of the repository `filpo-ops/data-driven-models-for-investments` (machine
+learning and momentum on semiconductors). The long/short strategy designed here was frozen but **never run on the
+validation or Out-of-Sample periods**: no result of those periods exists for it. Nothing is deleted; the parts that can
+help the final project (data checks, overnight and daytime features, Bloomberg cleaning) may be reused there.
+
+A seasonal idea (short the semiconductors from November to January, long from spring) was checked on 2001-2017 only,
+before the Out-of-Sample period of the final project (from 2018): November to January are the best months (equal weight
+of the semiconductors +3.1% a month against +1.15% in the other months; SPY +0.8% against +0.5%), and the rule loses
+5.1% a year against +15.0% for always long. Rejected, as the literature predicts (Bouman and Jacobsen, 2002, "The
+Halloween indicator"; the January effect); a short position also pays the dividends instead of earning them.
