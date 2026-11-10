@@ -63,6 +63,7 @@ In-Sample period), Out-of-Sample from 2018-12-31. Execution at the next open, 10
 
 | File | Content |
 |---|---|
+| [docs/memoria_progetto.md](docs/memoria_progetto.md) | Memoria del gruppo (in italiano): cronologia, decisioni, risultati, cosa manca |
 | [docs/bloomberg.md](docs/bloomberg.md) | Semiconductor universe from Bloomberg: cleaning, checks, exploratory analysis, limits |
 | [docs/figures.md](docs/figures.md) | The figures for the slides, each with what it shows |
 | [docs/strategy.md](docs/strategy.md) | Hypothesis, data, periods, exact signal logic, genetic algorithm, execution, benchmarks, pitfalls |
