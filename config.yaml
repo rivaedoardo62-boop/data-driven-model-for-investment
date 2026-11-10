@@ -23,9 +23,8 @@ bloomberg: # semiconductor universe of the SOX index (09_download_bloomberg.py);
   winsorize: 0.01 # cut each feature at its 1% and 99% cross-sectional quantiles before the z-score
 
 longshort: # final strategy: long/short on the SOX members (src/longshort.py, 12_optimize_longshort.py); periods and GA as ga
-  features: # momentum and the 4-week return split into overnight and daytime parts (Lou, Polk and Skouras, 2019)
-    [overnight_momentum_52_4, daytime_momentum_52_4, overnight_return_4w, daytime_return_4w,
-     trend_26w, from_high_52w, volatility_26w, volatility_ratio, beta_52w]
+  features: # momentum replaced by its overnight part (Lou, Polk and Skouras, 2019); decided on 2026-11-10
+    [return_4w, overnight_momentum_52_4, trend_26w, from_high_52w, volatility_26w, volatility_ratio, beta_52w]
   quantile: 0.2 # long the top 20% of the scores, short the bottom 20%
   min_companies: 10 # no position in a week with fewer companies in the universe
   sizing: dollar # dollar: half long, half short; beta: sides sized so that the 52-week beta of the portfolio is zero

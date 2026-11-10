@@ -215,3 +215,16 @@ With 9 features the members agree only on volatility (positive in all 5) and dis
 all 5); the overnight part of momentum is positive in 4 of 5; the daytime parts and the 4-week parts change sign. More
 features did not help: with the same budget the search is noisier and the average of the members dilutes them. The
 feature set is decided by the group before the run on the point-in-time universe.
+
+## Final design frozen on 2026-11-10, before the run on the point-in-time universe
+
+Decided by the group, with only training results of the provisional universe seen:
+- Features (7): return of 4 weeks, **overnight part of the 52-4 week momentum** (it replaces the momentum: on the
+  training period it is the only part of momentum with a significant return, and the usual momentum loses), trend 26
+  weeks, distance from the 52-week high, volatility 26 weeks, volatility ratio 10/52 weeks, beta 52 weeks.
+- Long the top 20%, short the bottom 20%, half of the capital on each side (dollar neutral), 10 bps per trade, 0.5% a year
+  to borrow the shares sold short: confirmed.
+- The market-neutral bonus is not pursued: on the training period the strategy has a beta of about 0.2 to SPY, and
+  neither the dollar nor the beta neutral sizing removes it. The beta, the correlation and the weeks when SPY falls are
+  reported as limits.
+- Everything else as in the design of 2026-11-08. Nothing changes after the validation and Out-of-Sample results.

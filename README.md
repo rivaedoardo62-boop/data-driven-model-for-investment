@@ -23,6 +23,7 @@ python 09_download_bloomberg.py          # only on a Bloomberg Terminal PC: semi
 uv run python 10_clean_bloomberg.py      # one series per company, checks, weekly tables, features (data/bloomberg/clean/)
 uv run python 11_eda_bloomberg.py        # exploratory figures and tables (data/bloomberg/eda/)
 uv run python 12_optimize_longshort.py   # final strategy: weights of the long/short on semiconductors, training only
+uv run python 13_evaluate_longshort.py   # final strategy: training, validation and Out-of-Sample (run once)
 ```
 
 The data are in the repository, so the results are reproducible without downloading anything: start from
@@ -49,6 +50,7 @@ script runs with a different `config.yaml`.
 | `10_clean_bloomberg.py` | `data/bloomberg/raw/prices.parquet` (and `membership.csv`) | `data/bloomberg/clean/`: daily and weekly prices per company, `features.parquet`, `companies.csv`, checks |
 | `11_eda_bloomberg.py` | `data/bloomberg/clean/` | `data/bloomberg/eda/*.png`, `*.csv` |
 | `12_optimize_longshort.py` | `data/bloomberg/clean/` | `data/bloomberg/longshort/`: `best.yaml` (weights), `members.csv`, `history.csv` |
+| `13_evaluate_longshort.py` | `data/bloomberg/`, `data/prices/`, `data/extra/macro/` | `data/bloomberg/longshort/evaluation/`: returns, metrics, bootstrap, market regimes, figures |
 
 Shared code is in `src/`: `backtest.py` (forward returns, costs), `ensemble.py` (indicators and vote), `genetic.py`
 (genetic algorithm, DEAP), `metrics.py`, `plots.py`, `data.py` (downloads and weekly tables), `validation.py`
