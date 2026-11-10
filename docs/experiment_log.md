@@ -228,3 +228,19 @@ Decided by the group, with only training results of the provisional universe see
   neither the dollar nor the beta neutral sizing removes it. The beta, the correlation and the weeks when SPY falls are
   reported as limits.
 - Everything else as in the design of 2026-11-08. Nothing changes after the validation and Out-of-Sample results.
+
+Development run of the frozen design (provisional universe, training only), with `13_evaluate_longshort.py
+--training-only` to test the evaluation:
+
+| Training (2001-2014) | Sharpe | Annual return | Max drawdown | Beta to SPY |
+|---|---|---|---|---|
+| Long/short, average of the 5 members | 0.95 (bootstrap 95%: 0.41 to 1.48) | 12.0% | -20.5% | 0.23 |
+| Random search, average | 0.81 | 9.7% | -26.6% | 0.17 |
+| Equal weight of the universe (in excess of the T-bill) | 0.27 | 9.6% | -66.4% | 1.49 |
+
+Findings, written before any validation or Out-of-Sample result:
+- 5 of 7 weights keep their sign in all 5 runs: return of 4 weeks and volatility positive; distance from the 52-week
+  high, volatility ratio and beta negative. The overnight part of momentum, positive on its own, gets a negative weight in
+  4 runs of 5 next to the other features: its premium on its own probably came from its link with volatility.
+- The training gain comes from 2001-2003 and 2009 (+81%); from 2010 to 2014 the strategy is flat while the equal weight
+  rises. A weak validation or Out-of-Sample result would not be a surprise.
