@@ -9,12 +9,12 @@ Steps:
     3. weekly tables as data/prices (first open and last close of each week); a company that left the market is sold at
        its last price, in the week after it
     4. features of each company and week, with prices up to that Friday only, winsorized and z-scored week by week
-    5. if data/bloomberg/raw/membership.csv exists: who was in the SOX index in each week (point in time)
+    5. if data/bloomberg/raw/sox_membership.csv exists: who was in the SOX index in each week (point in time)
 
-Input:  data/bloomberg/raw/prices.parquet (and membership.csv), data/prices/raw/close.csv (trading calendar)
+Input:  data/bloomberg/raw/prices.parquet (and sox_membership.csv), data/prices/raw/close.csv (trading calendar)
 Output: data/bloomberg/clean/daily.parquet           one row per company and day
         data/bloomberg/clean/{open,close,market_cap,traded_value}.csv   weekly, one column per company
-        data/bloomberg/clean/in_index.csv            (with membership.csv) True when the company was in the index
+        data/bloomberg/clean/in_index.csv            (with sox_membership.csv) True when the company was in the index
         data/bloomberg/clean/features.parquet        one row per company and week
         data/bloomberg/clean/companies.csv           one row per company: lines, first and last price, exit, risk
         data/bloomberg/clean/line_switches.csv       changes of exchange
@@ -70,14 +70,13 @@ def main() -> None:
     save(daily.reset_index(), clean / "daily.parquet", index=False)
     for name in ["open", "close", "market_cap", "traded_value", "overnight", "daytime"]:
         save(tables[name], clean / f"{name}.csv")
-    if (raw_dir / "membership.csv").exists():
-        in_index = bloomberg.index_membership(
-            pd.read_csv(raw_dir / "membership.csv"), tables["close"].index, tables["close"].columns
-        )
+    membership = next((raw_dir / n for n in ["sox_membership.csv", "membership.csv"] if (raw_dir / n).exists()), None)
+    if membership:
+        in_index = bloomberg.index_membership(pd.read_csv(membership), tables["close"].index, tables["close"].columns)
         save(in_index, clean / "in_index.csv")
         feats = feats.join(in_index.stack().rename("in_index"))
     else:
-        print("raw/membership.csv not found: no point-in-time membership yet (run 09_download_bloomberg.py --membership-only)")
+        print("raw/sox_membership.csv not found: no point-in-time membership yet (09_download_bloomberg.py --membership-only)")
     save(feats, clean / "features.parquet")
     save(companies, clean / "companies.csv")
     save(bloomberg.line_switches(daily), clean / "line_switches.csv", index=False)

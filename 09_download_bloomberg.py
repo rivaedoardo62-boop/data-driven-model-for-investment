@@ -6,8 +6,9 @@ uv environment: on that PC install `pip install pandas pyarrow` and
 Its outputs are copied to data/bloomberg/ and read from there: the results are reproducible without a terminal.
 
 What it downloads (each run writes a folder, --out):
-    membership.csv         members of the SOX index (PHLX Semiconductor) and their weights at the end of every year
-                           (member as Bloomberg gives it, e.g. "MU UN", and its composite ticker "MU US Equity"):
+    sox_membership.csv     members of the SOX index (PHLX Semiconductor) and their weights at the end of every quarter
+                           (--every year for year ends), with the member line as Bloomberg gives it ("MU UN"), its ISIN
+                           and name, and its composite ticker ("MU US Equity"):
                            who was in the index at each date, so that a stock enters the test only after it entered
                            the index (the union of all members would bring back future winners)
     universe.csv, meta.csv every stock ever a member, with name, ISIN, sub-industry, country, currency, market status
@@ -18,13 +19,15 @@ What it downloads (each run writes a folder, --out):
     actions.parquet        dividends and splits (DVD_HIST_ALL), with ex-date, amount and type
     monthly.parquet        monthly market value and P/E, trailing and forward (context only, never a signal)
     benchmark_sox.parquet  the SOX index, price and total return
+    benchmark_spx.parquet, riskfree.parquet   with --benchmarks: SPXT Index (S&P 500 total return), USGG3M Index (3-month
+                           T-bill yield, %)
     failed.txt             tickers or fields without data (only if any)
 
 Prices are downloaded for the composite ticker (US): one series per company, also across a change of exchange.
 
 Examples:
     python 09_download_bloomberg.py --tickers "MU US Equity" "9966620D US Equity" --out bloomberg_test   # quick test
-    python 09_download_bloomberg.py --membership-only --out bloomberg_members                        # only who/when
+    python 09_download_bloomberg.py --membership-only --benchmarks --out bloomberg_members  # who/when, S&P 500, T-bill
     python 09_download_bloomberg.py --out bloomberg_data                                              # full universe
     python 09_download_bloomberg.py --lite --out bloomberg_data                       # the same with open/close only
     python 09_download_bloomberg.py --tickers "AAPL US Equity" "MSFT US Equity" "AMZN US Equity" \\
@@ -121,10 +124,14 @@ def composite(member: str) -> str:
     return f"{member.split()[0]} US Equity"
 
 
-def membership(session, svc, start: dt.date, end: dt.date) -> pd.DataFrame:
-    """Members of the index and their weights at the end of every year, and today."""
+def membership(session, svc, start: dt.date, end: dt.date, every: str = "quarter") -> pd.DataFrame:
+    """Members of the index and their weights at the end of every quarter (or year), and today, with the ISIN and the
+    name of each member line (to join with a dataset deduplicated by ISIN)."""
     rows = []
-    dates = [min(dt.date(y, 12, 31), end) for y in range(start.year, end.year + 1)]
+    freq = "QE" if every == "quarter" else "YE"
+    dates = [d.date() for d in pd.date_range(start, end, freq=freq)]
+    if not dates or dates[-1] < end:
+        dates.append(end)
     for d in dates:
         for _, fd in reference_request(session, svc, [INDEX], ["INDX_MWEIGHT_HIST"], {"END_DATE_OVERRIDE": d.strftime("%Y%m%d")}):
             for r in bulk_rows(fd, "INDX_MWEIGHT_HIST"):
@@ -138,7 +145,13 @@ def membership(session, svc, start: dt.date, end: dt.date) -> pd.DataFrame:
         for r in bulk_rows(fd, "INDX_MEMBERS"):
             member = str(next(iter(r.values()))).strip()
             rows.append({"date": dt.date.today(), "member": member, "ticker": composite(member), "weight": None})
-    return pd.DataFrame(rows)
+    table = pd.DataFrame(rows)
+    lines = sorted(f"{m} Equity" for m in table["member"].unique())
+    ids = {t: {f: (fd.getElementAsString(f) if fd.hasElement(f) else None) for f in ["ID_ISIN", "NAME"]}
+           for t, fd in reference_request(session, svc, lines, ["ID_ISIN", "NAME"])}  # fmt: skip
+    table["isin"] = [ids.get(f"{m} Equity", {}).get("ID_ISIN") for m in table["member"]]
+    table["name"] = [ids.get(f"{m} Equity", {}).get("NAME") for m in table["member"]]
+    return table
 
 
 # ---------------------------------------------------------------- data
@@ -213,6 +226,10 @@ def main() -> None:
     ap.add_argument("--out", default="bloomberg_data")
     ap.add_argument("--membership-only", action="store_true", help="only membership.csv, universe.csv, meta.csv: very few data")
     ap.add_argument("--lite", action="store_true", help="daily open, close and total return only (fewer data than OHLCV)")
+    ap.add_argument("--every", choices=["quarter", "year"], default="quarter", help="dates of the index composition")
+    ap.add_argument(
+        "--benchmarks", action="store_true", help="also SPXT Index (S&P 500 total return) and USGG3M Index (3-month T-bill)"
+    )
     a = ap.parse_args()
 
     start, end = dt.date.fromisoformat(a.start), dt.date.fromisoformat(a.end)
@@ -224,8 +241,9 @@ def main() -> None:
         if a.tickers:
             tickers = sorted(a.tickers)
         else:
-            members = membership(session, svc, start, end)
-            members.to_csv(out / "membership.csv", index=False)
+            members = membership(session, svc, start, end, a.every)
+            members.to_csv(out / "sox_membership.csv", index=False)
+            print(f"Saved {out / 'sox_membership.csv'}: {members['date'].nunique()} dates, {len(members)} rows")
             tickers = sorted(members["ticker"].unique())
             print(f"Universe: {len(tickers)} stocks ever in {INDEX} from {start.year}")
         pd.Series(tickers, name="ticker").to_csv(out / "universe.csv", index=False)
@@ -236,7 +254,14 @@ def main() -> None:
         ]
         pd.DataFrame(meta).to_csv(out / "meta.csv", index=False)
         print(f"Saved {out / 'meta.csv'}: check the names, a delisted ticker can be reused by another company")
+        if a.benchmarks:
+            for security, name in [("SPXT Index", "benchmark_spx"), ("USGG3M Index", "riskfree")]:
+                table, f5 = history(session, svc, [security], ["PX_LAST"], start, end)
+                save(table, out / name)
+                failed += f5
         if a.membership_only:
+            if failed:
+                (out / "failed.txt").write_text("\n".join(dict.fromkeys(failed)) + "\n")
             return
 
         fields = ["PX_OPEN", "PX_LAST", "TOT_RETURN_INDEX_GROSS_DVDS"] if a.lite else DAILY_FIELDS

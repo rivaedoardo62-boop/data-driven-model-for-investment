@@ -198,8 +198,8 @@ def summary(daily: pd.DataFrame, end: pd.Timestamp, exited_after: int) -> pd.Dat
 def index_membership(membership: pd.DataFrame, weeks: pd.MultiIndex, companies: pd.Index) -> pd.DataFrame:
     """True where a company was in the index in a week: the last composition published before that Friday.
 
-    membership.csv holds the composition at the end of every year (09_download_bloomberg.py): a company that entered
-    during a year counts from the next year end (conservative), one that left counts until it disappears from a year end.
+    sox_membership.csv holds the composition at the end of every quarter (09_download_bloomberg.py): a company that entered
+    during a quarter counts from the next quarter end (conservative), one that left counts until it disappears from one.
     """
     m = membership.assign(company=membership["ticker"].str.split().str[0], date=pd.to_datetime(membership["date"]))
     snapshots = m.groupby("date")["company"].apply(set).sort_index()
